@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.9">
+  <model name="hazard_debris">
+    <static>true</static>
+    <pose>0 0 .6 0 0 0</pose>
+    <link name="link">
+      <visual name="visual_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.2 3.2 1.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>.3 .32 .34 1</ambient>
+          <diffuse>.3 .32 .34 1</diffuse>
+        </material>
+      </visual>
+      <collision name="collision_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.2 3.2 1.2</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+  </model>
+</sdf>

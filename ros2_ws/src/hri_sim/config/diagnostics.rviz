@@ -1,0 +1,81 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Global Options:
+    Background Color: 27; 33; 39
+    Fixed Frame: odom
+    Frame Rate: 20
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Ground grid
+      Enabled: true
+      Cell Size: 1
+      Plane Cell Count: 40
+      Color: 70; 83; 91
+      Reference Frame: <Fixed Frame>
+    - Class: rviz_default_plugins/TF
+      Name: Robot and sensor frames
+      Enabled: true
+      Frame Timeout: 10
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Marker Scale: 0.5
+    - Class: rviz_default_plugins/LaserScan
+      Name: Gazebo lidar
+      Enabled: true
+      Topic:
+        Value: /robot/scan
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Depth: 5
+      Style: Points
+      Size (Pixels): 3
+      Color Transformer: FlatColor
+      Color: 77; 223; 197
+      Position Transformer: XYZ
+      Decay Time: 0
+      Use Fixed Frame: true
+    - Class: rviz_default_plugins/Odometry
+      Name: Wheel odometry
+      Enabled: true
+      Topic:
+        Value: /robot/odom
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Depth: 5
+      Keep: 100
+      Position Tolerance: 0.1
+      Angle Tolerance: 0.1
+      Shape: Arrow
+    - Class: rviz_default_plugins/Image
+      Name: Gazebo robot camera
+      Enabled: true
+      Topic:
+        Value: /robot/camera/image
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Depth: 2
+      Transport Hint: raw
+      Normalize Range: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Orbit
+      Distance: 22
+      Pitch: 0.8
+      Yaw: 0.6
+      Focal Point:
+        X: 6
+        Y: 2
+        Z: 0
+Window Geometry:
+  Width: 1280
+  Height: 800

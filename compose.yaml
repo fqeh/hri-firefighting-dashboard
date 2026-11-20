@@ -1,0 +1,18 @@
+services:
+  sim:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: belief-aware-hri:jazzy
+    init: true
+    shm_size: 1gb
+    working_dir: /work
+    volumes:
+      - .:/work
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      ROS_DOMAIN_ID: "42"
+      GZ_PARTITION: belief_aware_hri
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    command: ["bash", "scripts/run_demo.sh", "forest"]

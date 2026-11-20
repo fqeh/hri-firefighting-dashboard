@@ -1,0 +1,157 @@
+{
+  "scenario": "oil_facility",
+  "world": "oil_facility",
+  "frame": "world",
+  "nodes": {
+    "gate": [
+      0,
+      0
+    ],
+    "junction": [
+      3,
+      0
+    ],
+    "corridor_b": [
+      9,
+      0
+    ],
+    "north_junction": [
+      3,
+      6
+    ],
+    "north_service": [
+      9,
+      6
+    ],
+    "assembly": [
+      15,
+      6
+    ],
+    "south_junction": [
+      3,
+      -5
+    ],
+    "south_service": [
+      15,
+      -5
+    ]
+  },
+  "edges": [
+    {
+      "id": "access",
+      "source": "gate",
+      "target": "junction",
+      "length": 3.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "corridor_b",
+      "source": "junction",
+      "target": "corridor_b",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "east_exit",
+      "source": "corridor_b",
+      "target": "assembly",
+      "length": 8.48528137423857,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "corridor_c",
+      "source": "junction",
+      "target": "north_junction",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "north_road",
+      "source": "north_junction",
+      "target": "north_service",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "assembly_road",
+      "source": "north_service",
+      "target": "assembly",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "corridor_d",
+      "source": "junction",
+      "target": "south_junction",
+      "length": 5.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "south_road",
+      "source": "south_junction",
+      "target": "south_service",
+      "length": 12.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "south_exit",
+      "source": "south_service",
+      "target": "assembly",
+      "length": 11.0,
+      "initial_state": "unknown"
+    }
+  ],
+  "start": "gate",
+  "goal": "assembly",
+  "robot_start": [
+    0,
+    0,
+    0.02
+  ],
+  "human_start": [
+    -3,
+    -4,
+    0.02
+  ],
+  "uav_start": [
+    6,
+    0,
+    8
+  ],
+  "seed": 7,
+  "operator_initial_knowledge": {
+    "corridor_b": "blocked"
+  },
+  "operator": {
+    "destination": "assembly",
+    "request_at": 4.0,
+    "repeat_every_s": 6.0,
+    "repeat_count": 3,
+    "auto_approve": false,
+    "beta": 1.2,
+    "lapse": 0.0,
+    "trust": 0.9
+  },
+  "hazards": [
+    {
+      "id": "hazard_debris",
+      "model": "hazard_debris",
+      "edge": "corridor_b",
+      "position": [
+        6,
+        0,
+        0.6
+      ],
+      "at": 8.0,
+      "kind": "debris",
+      "radius": 1.8
+    }
+  ],
+  "case": "known",
+  "hazard_assumptions": {
+    "dynamics": "Seeded scheduled appearance; fixed conservative hazard envelopes persist until reset. No combustion, explosion or gas-dispersion solver.",
+    "fire": "Non-colliding flame/smoke visuals and a configurable exclusion radius.",
+    "gas": "Visible research marker for an ideal semantic gas detector; does not claim RGB gas detection.",
+    "debris": "Colliding aftermath obstacle; road blocker dimensions are verified in tests."
+  }
+}

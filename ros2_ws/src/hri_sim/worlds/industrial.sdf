@@ -1,0 +1,973 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.9">
+  <world name="industrial">
+    <physics name="deterministic_1ms" type="ignored">
+      <max_step_size>.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+    <gravity>0 0 -9.81</gravity>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics" />
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands" />
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster" />
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu" />
+    <plugin filename="gz-sim-logical-camera-system" name="gz::sim::systems::LogicalCamera" />
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <scene>
+      <ambient>.5 .5 .5 1</ambient>
+      <background>.62 .75 .83 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <light name="sun" type="directional">
+      <pose>0 0 20 0 0 0</pose>
+      <diffuse>.9 .9 .85 1</diffuse>
+      <specular>.2 .2 .2 1</specular>
+      <direction>-.4 .2 -.9</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+    <model name="ground">
+      <static>true</static>
+      <pose>8 0 -.1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>80 80 .2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.58 .52 .4 1</ambient>
+            <diffuse>.58 .52 .4 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>80 80 .2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <include>
+      <uri>model://robot</uri>
+      <name>robot</name>
+      <pose>0 0 .02 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://human</uri>
+      <name>human</name>
+      <pose>0 -2 .02 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://uav</uri>
+      <name>uav</name>
+      <pose>6 0 8 0 0 0</pose>
+    </include>
+    <model name="route_approach">
+      <static>true</static>
+      <pose>2.0 -2.0 .006 0 0 0.0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>4.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.24 .26 .28 1</ambient>
+            <diffuse>.24 .26 .28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_trail_a">
+      <static>true</static>
+      <pose>7.0 -2.0 .006 0 0 0.0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>6.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.24 .26 .28 1</ambient>
+            <diffuse>.24 .26 .28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_exit_a">
+      <static>true</static>
+      <pose>13.0 2.0 .006 0 0 0.9272952180016122</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>10.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.24 .26 .28 1</ambient>
+            <diffuse>.24 .26 .28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_trail_b">
+      <static>true</static>
+      <pose>4.0 2.0 .006 0 0 1.5707963267948966</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>8.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.24 .26 .28 1</ambient>
+            <diffuse>.24 .26 .28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_bypass">
+      <static>true</static>
+      <pose>7.0 6.0 .006 0 0 0.0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>6.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.24 .26 .28 1</ambient>
+            <diffuse>.24 .26 .28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_exit_b">
+      <static>true</static>
+      <pose>13.0 6.0 .006 0 0 0.0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>6.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.24 .26 .28 1</ambient>
+            <diffuse>.24 .26 .28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="safety_zone">
+      <static>true</static>
+      <pose>16 6 .018 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3 3 .02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.15 .62 .4 1</ambient>
+            <diffuse>.15 .62 .4 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="safety_marker">
+      <static>true</static>
+      <pose>17.5 7.5 1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.15 .15 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.1 .8 .35 1</ambient>
+            <diffuse>.1 .8 .35 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.15 .15 2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="oil_tank_0">
+      <static>true</static>
+      <pose>-5 3 2.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.7 .73 .74 1</ambient>
+            <diffuse>.7 .73 .74 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_roof_0">
+      <static>true</static>
+      <pose>-5 3 5.05 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.85 .85 .81 1</ambient>
+            <diffuse>.85 .85 .81 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="oil_tank_1">
+      <static>true</static>
+      <pose>-5 9 2.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.7 .73 .74 1</ambient>
+            <diffuse>.7 .73 .74 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_roof_1">
+      <static>true</static>
+      <pose>-5 9 5.05 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.85 .85 .81 1</ambient>
+            <diffuse>.85 .85 .81 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="oil_tank_2">
+      <static>true</static>
+      <pose>5 -8 2.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.7 .73 .74 1</ambient>
+            <diffuse>.7 .73 .74 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_roof_2">
+      <static>true</static>
+      <pose>5 -8 5.05 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.85 .85 .81 1</ambient>
+            <diffuse>.85 .85 .81 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="oil_tank_3">
+      <static>true</static>
+      <pose>12 -8 2.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.7 .73 .74 1</ambient>
+            <diffuse>.7 .73 .74 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2</radius>
+              <length>5</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_roof_3">
+      <static>true</static>
+      <pose>12 -8 5.05 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.85 .85 .81 1</ambient>
+            <diffuse>.85 .85 .81 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="building_0">
+      <static>true</static>
+      <pose>9 11 2 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5 4 4</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.73 .63 .45 1</ambient>
+            <diffuse>.73 .63 .45 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5 4 4</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="building_1">
+      <static>true</static>
+      <pose>20 -2 2 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5 6 4</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.73 .63 .45 1</ambient>
+            <diffuse>.73 .63 .45 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5 6 4</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="building_2">
+      <static>true</static>
+      <pose>-5 -6 2 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5 3 4</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.73 .63 .45 1</ambient>
+            <diffuse>.73 .63 .45 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>5 3 4</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="pipeline_0">
+      <static>true</static>
+      <pose>8 -5.5 .7 0 1.5707963267948966 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.22</radius>
+              <length>13</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.35 .4 .44 1</ambient>
+            <diffuse>.35 .4 .44 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.22</radius>
+              <length>13</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="pipeline_1">
+      <static>true</static>
+      <pose>-2 7 .7 0 1.5707963267948966 1.5707963267948966</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.22</radius>
+              <length>7</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.35 .4 .44 1</ambient>
+            <diffuse>.35 .4 .44 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.22</radius>
+              <length>7</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="gate_post_0">
+      <static>true</static>
+      <pose>14 4.3 1.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.25 .25 3</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.8 .55 .08 1</ambient>
+            <diffuse>.8 .55 .08 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.25 .25 3</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="gate_post_1">
+      <static>true</static>
+      <pose>14 7.7 1.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.25 .25 3</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.8 .55 .08 1</ambient>
+            <diffuse>.8 .55 .08 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.25 .25 3</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="gate_crossbar">
+      <static>true</static>
+      <pose>14 6 3 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.2 3.7 .2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.8 .55 .08 1</ambient>
+            <diffuse>.8 .55 .08 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>.2 3.7 .2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_0">
+      <static>true</static>
+      <pose>0 -12 1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.5 .52 .5 1</ambient>
+            <diffuse>.5 .52 .5 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_1">
+      <static>true</static>
+      <pose>4 -12 1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.5 .52 .5 1</ambient>
+            <diffuse>.5 .52 .5 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_2">
+      <static>true</static>
+      <pose>8 -12 1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.5 .52 .5 1</ambient>
+            <diffuse>.5 .52 .5 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_3">
+      <static>true</static>
+      <pose>12 -12 1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.5 .52 .5 1</ambient>
+            <diffuse>.5 .52 .5 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_4">
+      <static>true</static>
+      <pose>16 -12 1 0 0 0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.5 .52 .5 1</ambient>
+            <diffuse>.5 .52 .5 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>3.8 .2 2</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>
+  </world>
+</sdf>

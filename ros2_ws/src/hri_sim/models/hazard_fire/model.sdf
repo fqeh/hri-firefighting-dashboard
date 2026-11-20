@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.9">
+  <model name="hazard_fire">
+    <static>true</static>
+    <link name="link">
+      <visual name="flame_core_visual">
+        <pose>0 0 .9 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.7</radius>
+            <length>1.8</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 .25 .02 .85</ambient>
+          <diffuse>1 .25 .02 .85</diffuse>
+        </material>
+      </visual>
+      <visual name="flame_tip_visual">
+        <pose>0 0 1.8 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.5</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 .65 .02 .8</ambient>
+          <diffuse>1 .65 .02 .8</diffuse>
+        </material>
+      </visual>
+      <visual name="smoke_0_visual">
+        <pose>0.0 0 2.7 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.7</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>.22 .23 .25 .25</ambient>
+          <diffuse>.22 .23 .25 .25</diffuse>
+        </material>
+      </visual>
+      <visual name="smoke_1_visual">
+        <pose>0.15 0 3.5 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.95</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>.22 .23 .25 .25</ambient>
+          <diffuse>.22 .23 .25 .25</diffuse>
+        </material>
+      </visual>
+      <visual name="smoke_2_visual">
+        <pose>0.3 0 4.300000000000001 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>1.2</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>.22 .23 .25 .25</ambient>
+          <diffuse>.22 .23 .25 .25</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,541 @@
+{
+  "schema_version": 1,
+  "facility_id": "fictional_desert_energy_research_facility",
+  "facility_name": "Fictional Desert Energy Research Facility",
+  "source_statement": "Configuration registry linked to generated Gazebo models. This is not a sensor feed or a safety data sheet.",
+  "equipment": [
+    {
+      "equipment_id": "TK-01",
+      "category": "storage_tank",
+      "gazebo_model": "tank_0",
+      "geometry_reference": "oil_facility.sdf::tank_0",
+      "position_m": [
+        6.0,
+        3.6,
+        1.6
+      ],
+      "contents": {
+        "label": "Unspecified stored product",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "TK-02",
+      "category": "storage_tank",
+      "gazebo_model": "tank_1",
+      "geometry_reference": "oil_facility.sdf::tank_1",
+      "position_m": [
+        9.0,
+        3.6,
+        1.8
+      ],
+      "contents": {
+        "label": "Unspecified stored product",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "TK-03",
+      "category": "storage_tank",
+      "gazebo_model": "tank_2",
+      "geometry_reference": "oil_facility.sdf::tank_2",
+      "position_m": [
+        18.0,
+        3.0,
+        2.0
+      ],
+      "contents": {
+        "label": "Unspecified stored product",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "TK-04",
+      "category": "storage_tank",
+      "gazebo_model": "tank_3",
+      "geometry_reference": "oil_facility.sdf::tank_3",
+      "position_m": [
+        19.0,
+        -1.5,
+        1.6
+      ],
+      "contents": {
+        "label": "Unspecified stored product",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PL-01",
+      "category": "pipeline",
+      "gazebo_model": "pipeline_0",
+      "geometry_reference": "oil_facility.sdf::pipeline_0",
+      "position_m": [
+        0.0,
+        2.7,
+        0.95
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PL-02",
+      "category": "pipeline",
+      "gazebo_model": "pipeline_1",
+      "geometry_reference": "oil_facility.sdf::pipeline_1",
+      "position_m": [
+        0.0,
+        3.1,
+        0.95
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PL-03",
+      "category": "pipeline",
+      "gazebo_model": "pipeline_2",
+      "geometry_reference": "oil_facility.sdf::pipeline_2",
+      "position_m": [
+        0.0,
+        3.5,
+        0.95
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PC-01",
+      "category": "process_column",
+      "gazebo_model": "process_column_0",
+      "geometry_reference": "oil_facility.sdf::process_column_0",
+      "position_m": [
+        6.0,
+        -2.8,
+        2.4
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PC-02",
+      "category": "process_column",
+      "gazebo_model": "process_column_1",
+      "geometry_reference": "oil_facility.sdf::process_column_1",
+      "position_m": [
+        8.0,
+        -2.8,
+        2.4
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PC-03",
+      "category": "process_column",
+      "gazebo_model": "process_column_2",
+      "geometry_reference": "oil_facility.sdf::process_column_2",
+      "position_m": [
+        10.0,
+        -2.8,
+        2.4
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PV-01",
+      "category": "process_valve",
+      "gazebo_model": "process_valve_0",
+      "geometry_reference": "oil_facility.sdf::process_valve_0",
+      "position_m": [
+        6.0,
+        -2.3,
+        1.0
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PV-02",
+      "category": "process_valve",
+      "gazebo_model": "process_valve_1",
+      "geometry_reference": "oil_facility.sdf::process_valve_1",
+      "position_m": [
+        8.0,
+        -2.3,
+        1.0
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    },
+    {
+      "equipment_id": "PV-03",
+      "category": "process_valve",
+      "gazebo_model": "process_valve_2",
+      "geometry_reference": "oil_facility.sdf::process_valve_2",
+      "position_m": [
+        10.0,
+        -2.3,
+        1.0
+      ],
+      "contents": {
+        "label": "Unspecified process material",
+        "material_class": "unknown",
+        "source": "Not supplied; configuration placeholder"
+      },
+      "inventory": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": null
+      },
+      "temperature": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "degC"
+      },
+      "pressure": {
+        "status": "not_modeled",
+        "value": null,
+        "unit": "kPa"
+      },
+      "integrity": {
+        "status": "not_assessed"
+      },
+      "leak": {
+        "status": "not_modeled"
+      },
+      "safety_systems": {
+        "status": "not_modeled"
+      },
+      "sensors": []
+    }
+  ]
+}

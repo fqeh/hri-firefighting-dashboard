@@ -1,0 +1,31 @@
+services:
+  gui:
+    profiles: [gui]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: gui
+    image: belief-aware-hri:jazzy-gui
+    init: true
+    stop_grace_period: 20s
+    shm_size: 1gb
+    working_dir: /work
+    volumes:
+      - .:/work
+    ports:
+      - "127.0.0.1:${HRI_GUI_PORT:-6080}:6080"
+      - "127.0.0.1:${HRI_GUI_DASHBOARD_PORT:-8080}:8080"
+    environment:
+      ROS_DOMAIN_ID: "${HRI_GUI_ROS_DOMAIN:-46}"
+      GZ_PARTITION: "${HRI_GUI_PARTITION:-hri_gui_validation}"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      DISPLAY: ":99"
+      HRI_GUI_SIZE: "${HRI_GUI_SIZE:-1280x800}"
+      HRI_GUI_OUTPUT: "${HRI_GUI_OUTPUT:-/work/results/gui}"
+    command: ["bash", "scripts/run_gui.sh", "${HRI_GUI_SCENARIO:-forest}", "mission:=${HRI_GUI_MISSION:-true}", "dashboard:=${HRI_GUI_DASHBOARD:-true}", "start_paused:=${HRI_GUI_START_PAUSED:-true}", "forest_case:=${HRI_FOREST_CASE:-}", "oil_case:=${HRI_OIL_CASE:-blockage}", "nav2:=${HRI_NAV2:-auto}", "simulated_operator:=${HRI_SIMULATED_OPERATOR:-false}", "seed:=${HRI_FOREST_SEED:-7}", "scenario_config:=${HRI_SCENARIO_CONFIG:-}", "policy:=${HRI_POLICY:-B4}", "observation_radius:=${HRI_HUMAN_RADIUS:-3.0}", "assumed_observation_radius:=${HRI_HUMAN_RADIUS:-3.0}", "passive_map_rate:=${HRI_MAP_RATE:-0.05}", "human_lapse:=${HRI_HUMAN_LAPSE:-0.03}", "trust:=${HRI_HUMAN_TRUST:-0.8}", "warning_engine:=${HRI_WARNING_ENGINE:-expected_loss}", "observe_enabled:=${HRI_OBSERVE:-true}"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null && xdpyinfo -display :99 >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 20s

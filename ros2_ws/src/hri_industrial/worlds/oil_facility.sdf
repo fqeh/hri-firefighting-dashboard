@@ -1,0 +1,2353 @@
+<sdf version="1.9">
+  <world name="oil_facility">
+    <physics name="deterministic_1ms" type="ignored">
+      <max_step_size>.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+    <gravity>0 0 -9.81</gravity>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics" />
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands" />
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster" />
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu" />
+    <plugin filename="gz-sim-logical-camera-system" name="gz::sim::systems::LogicalCamera" />
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <scene>
+      <ambient>.5 .5 .5 1</ambient>
+      <background>.78 .72 .60 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <light name="sun" type="directional">
+      <pose>0 0 20 0 0 0</pose>
+      <diffuse>.9 .9 .85 1</diffuse>
+      <specular>.2 .2 .2 1</specular>
+      <direction>-.4 .2 -.9</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+    <model name="desert_ground">
+      <static>true</static>
+      <pose>8 0 -0.1 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>75 65 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.70 .60 .43 1</ambient>
+            <diffuse>.70 .60 .43 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>75 65 0.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="route_access">
+      <static>true</static>
+      <pose>1.5 0.0 0.008 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>3.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_access_0">
+      <static>true</static>
+      <pose>1.5 0.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_corridor_b">
+      <static>true</static>
+      <pose>6.0 0.0 0.008 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>6.0 2.6 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_b_0">
+      <static>true</static>
+      <pose>4.0 0.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_b_1">
+      <static>true</static>
+      <pose>6.0 0.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_b_2">
+      <static>true</static>
+      <pose>8.0 0.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_east_exit">
+      <static>true</static>
+      <pose>12.0 3.0 0.008 0 0 0.7853981633974483</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>8.48528137423857 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_east_exit_0">
+      <static>true</static>
+      <pose>9.75 0.75 0.019 0 0 0.7853981633974483</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_east_exit_1">
+      <static>true</static>
+      <pose>11.25 2.25 0.019 0 0 0.7853981633974483</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_east_exit_2">
+      <static>true</static>
+      <pose>12.75 3.75 0.019 0 0 0.7853981633974483</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_east_exit_3">
+      <static>true</static>
+      <pose>14.25 5.25 0.019 0 0 0.7853981633974483</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_corridor_c">
+      <static>true</static>
+      <pose>3.0 3.0 0.008 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>6.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_c_0">
+      <static>true</static>
+      <pose>3.0 1.0 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_c_1">
+      <static>true</static>
+      <pose>3.0 3.0 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_c_2">
+      <static>true</static>
+      <pose>3.0 5.0 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_north_road">
+      <static>true</static>
+      <pose>6.0 6.0 0.008 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>6.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_north_road_0">
+      <static>true</static>
+      <pose>4.0 6.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_north_road_1">
+      <static>true</static>
+      <pose>6.0 6.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_north_road_2">
+      <static>true</static>
+      <pose>8.0 6.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_assembly_road">
+      <static>true</static>
+      <pose>12.0 6.0 0.008 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>6.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_assembly_road_0">
+      <static>true</static>
+      <pose>10.0 6.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_assembly_road_1">
+      <static>true</static>
+      <pose>12.0 6.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_assembly_road_2">
+      <static>true</static>
+      <pose>14.0 6.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_corridor_d">
+      <static>true</static>
+      <pose>3.0 -2.5 0.008 0 0 -1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>5.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_d_0">
+      <static>true</static>
+      <pose>3.0 -1.25 0.019 0 0 -1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_corridor_d_1">
+      <static>true</static>
+      <pose>3.0 -3.75 0.019 0 0 -1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_south_road">
+      <static>true</static>
+      <pose>9.0 -5.0 0.008 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>12.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_road_0">
+      <static>true</static>
+      <pose>4.0 -5.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_road_1">
+      <static>true</static>
+      <pose>6.0 -5.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_road_2">
+      <static>true</static>
+      <pose>8.0 -5.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_road_3">
+      <static>true</static>
+      <pose>10.0 -5.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_road_4">
+      <static>true</static>
+      <pose>12.0 -5.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_road_5">
+      <static>true</static>
+      <pose>14.0 -5.0 0.019 0 0 0.0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_south_exit">
+      <static>true</static>
+      <pose>15.0 0.5 0.008 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>11.0 3.4 0.015</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_exit_0">
+      <static>true</static>
+      <pose>15.0 -3.9 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_exit_1">
+      <static>true</static>
+      <pose>15.0 -1.7000000000000002 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_exit_2">
+      <static>true</static>
+      <pose>15.0 0.5 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_exit_3">
+      <static>true</static>
+      <pose>15.0 2.6999999999999993 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="lane_south_exit_4">
+      <static>true</static>
+      <pose>15.0 4.9 0.019 0 0 1.5707963267948966</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.7 0.07 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.90 .82 .54 1</ambient>
+            <diffuse>.90 .82 .54 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_gate">
+      <static>true</static>
+      <pose>0 0 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_junction">
+      <static>true</static>
+      <pose>3 0 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_corridor_b">
+      <static>true</static>
+      <pose>9 0 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_north_junction">
+      <static>true</static>
+      <pose>3 6 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_north_service">
+      <static>true</static>
+      <pose>9 6 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_assembly">
+      <static>true</static>
+      <pose>15 6 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_south_junction">
+      <static>true</static>
+      <pose>3 -5 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="junction_pad_south_service">
+      <static>true</static>
+      <pose>15 -5 0.01 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.85</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.18 .20 .22 1</ambient>
+            <diffuse>.18 .20 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="assembly_east">
+      <static>true</static>
+      <pose>15 6 0.026 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>3.3 3.3 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.08 .53 .32 1</ambient>
+            <diffuse>.08 .53 .32 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="assembly_east_sign">
+      <static>true</static>
+      <pose>13.4 7.8 1.5 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.12 0.12 3.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.75 .75 .70 1</ambient>
+            <diffuse>.75 .75 .70 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.12 0.12 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="assembly_east_panel">
+      <static>true</static>
+      <pose>13.4 7.8 2.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>1.5 0.08 0.8</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.08 .65 .35 1</ambient>
+            <diffuse>.08 .65 .35 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>1.5 0.08 0.8</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="assembly_east_mark">
+      <static>true</static>
+      <pose>13.4 7.74 2.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.85 0.02 0.13</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.96 .96 .90 1</ambient>
+            <diffuse>.96 .96 .90 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="assembly_north">
+      <static>true</static>
+      <pose>3 6 0.026 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>3.3 3.3 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.08 .53 .32 1</ambient>
+            <diffuse>.08 .53 .32 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="assembly_north_sign">
+      <static>true</static>
+      <pose>1.4 7.8 1.5 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.12 0.12 3.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.75 .75 .70 1</ambient>
+            <diffuse>.75 .75 .70 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.12 0.12 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="assembly_north_panel">
+      <static>true</static>
+      <pose>1.4 7.8 2.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>1.5 0.08 0.8</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.08 .65 .35 1</ambient>
+            <diffuse>.08 .65 .35 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>1.5 0.08 0.8</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="assembly_north_mark">
+      <static>true</static>
+      <pose>1.4 7.74 2.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.85 0.02 0.13</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.96 .96 .90 1</ambient>
+            <diffuse>.96 .96 .90 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_0">
+      <static>true</static>
+      <pose>6 3.6 1.6 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.35</radius>
+              <length>3.2</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.78 .78 .72 1</ambient>
+            <diffuse>.78 .78 .72 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.35</radius>
+              <length>3.2</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_0_roof">
+      <static>true</static>
+      <pose>6 3.6 3.25 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.4700000000000002</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.91 .90 .83 1</ambient>
+            <diffuse>.91 .90 .83 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.4700000000000002</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_0_base">
+      <static>true</static>
+      <pose>6 3.6 0.13 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.6</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.43 .43 .39 1</ambient>
+            <diffuse>.43 .43 .39 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.6</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_0_band_0.8">
+      <static>true</static>
+      <pose>6 3.6 0.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.365</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_0_band_2.1">
+      <static>true</static>
+      <pose>6 3.6 2.1 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.365</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_1">
+      <static>true</static>
+      <pose>9 3.6 1.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.2</radius>
+              <length>3.6</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.78 .78 .72 1</ambient>
+            <diffuse>.78 .78 .72 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.2</radius>
+              <length>3.6</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_1_roof">
+      <static>true</static>
+      <pose>9 3.6 3.65 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.3199999999999998</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.91 .90 .83 1</ambient>
+            <diffuse>.91 .90 .83 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.3199999999999998</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_1_base">
+      <static>true</static>
+      <pose>9 3.6 0.13 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.45</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.43 .43 .39 1</ambient>
+            <diffuse>.43 .43 .39 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.45</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_1_band_0.8">
+      <static>true</static>
+      <pose>9 3.6 0.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.2149999999999999</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_1_band_2.1">
+      <static>true</static>
+      <pose>9 3.6 2.1 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.2149999999999999</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_2">
+      <static>true</static>
+      <pose>18 3 2.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.8</radius>
+              <length>4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.78 .78 .72 1</ambient>
+            <diffuse>.78 .78 .72 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.8</radius>
+              <length>4</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_2_roof">
+      <static>true</static>
+      <pose>18 3 4.05 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.92</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.91 .90 .83 1</ambient>
+            <diffuse>.91 .90 .83 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.92</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_2_base">
+      <static>true</static>
+      <pose>18 3 0.13 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.43 .43 .39 1</ambient>
+            <diffuse>.43 .43 .39 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>2.05</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_2_band_0.8">
+      <static>true</static>
+      <pose>18 3 0.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.815</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_2_band_2.1">
+      <static>true</static>
+      <pose>18 3 2.1 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.815</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_3">
+      <static>true</static>
+      <pose>19 -1.5 1.6 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.5</radius>
+              <length>3.2</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.78 .78 .72 1</ambient>
+            <diffuse>.78 .78 .72 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.5</radius>
+              <length>3.2</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_3_roof">
+      <static>true</static>
+      <pose>19 -1.5 3.25 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.62</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.91 .90 .83 1</ambient>
+            <diffuse>.91 .90 .83 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.62</radius>
+              <length>0.13</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_3_base">
+      <static>true</static>
+      <pose>19 -1.5 0.13 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.75</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.43 .43 .39 1</ambient>
+            <diffuse>.43 .43 .39 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>1.75</radius>
+              <length>0.26</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="tank_3_band_0.8">
+      <static>true</static>
+      <pose>19 -1.5 0.8 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.515</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="tank_3_band_2.1">
+      <static>true</static>
+      <pose>19 -1.5 2.1 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>1.515</radius>
+              <length>0.08</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .48 .22 1</ambient>
+            <diffuse>.65 .48 .22 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="pipeline_0">
+      <static>true</static>
+      <pose>0 2.7 .95 0 1.57079632679 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.13</radius>
+              <length>7.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .45 .16 1</ambient>
+            <diffuse>.65 .45 .16 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.13</radius>
+              <length>7.5</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="pipeline_1">
+      <static>true</static>
+      <pose>0 3.1 .95 0 1.57079632679 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.13</radius>
+              <length>7.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .45 .16 1</ambient>
+            <diffuse>.65 .45 .16 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.13</radius>
+              <length>7.5</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="pipeline_2">
+      <static>true</static>
+      <pose>0 3.5 .95 0 1.57079632679 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.13</radius>
+              <length>7.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.65 .45 .16 1</ambient>
+            <diffuse>.65 .45 .16 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.13</radius>
+              <length>7.5</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="pipe_support_-2">
+      <static>true</static>
+      <pose>-2 3.1 0.45 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.2 1.3 0.9</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.30 .32 .34 1</ambient>
+            <diffuse>.30 .32 .34 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.2 1.3 0.9</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="pipe_support_0">
+      <static>true</static>
+      <pose>0 3.1 0.45 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.2 1.3 0.9</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.30 .32 .34 1</ambient>
+            <diffuse>.30 .32 .34 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.2 1.3 0.9</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="pipe_support_1.4">
+      <static>true</static>
+      <pose>1.4 3.1 0.45 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.2 1.3 0.9</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.30 .32 .34 1</ambient>
+            <diffuse>.30 .32 .34 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.2 1.3 0.9</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_column_0">
+      <static>true</static>
+      <pose>6 -2.8 2.4 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>4.8</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.55 .58 .59 1</ambient>
+            <diffuse>.55 .58 .59 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>4.8</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_valve_0">
+      <static>true</static>
+      <pose>6 -2.3 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.18</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.82 .16 .10 1</ambient>
+            <diffuse>.82 .16 .10 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.18</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_column_1">
+      <static>true</static>
+      <pose>8 -2.8 2.4 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>4.8</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.55 .58 .59 1</ambient>
+            <diffuse>.55 .58 .59 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>4.8</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_valve_1">
+      <static>true</static>
+      <pose>8 -2.3 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.18</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.82 .16 .10 1</ambient>
+            <diffuse>.82 .16 .10 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.18</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_column_2">
+      <static>true</static>
+      <pose>10 -2.8 2.4 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>4.8</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.55 .58 .59 1</ambient>
+            <diffuse>.55 .58 .59 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.42</radius>
+              <length>4.8</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_valve_2">
+      <static>true</static>
+      <pose>10 -2.3 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.18</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.82 .16 .10 1</ambient>
+            <diffuse>.82 .16 .10 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.18 0.18 0.18</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="process_gantry">
+      <static>true</static>
+      <pose>8 -2.8 3.1 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>5.3 1.2 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.38 .42 .43 1</ambient>
+            <diffuse>.38 .42 .43 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>5.3 1.2 0.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="control_building">
+      <static>true</static>
+      <pose>-3 -4.1 1.55 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>3.5 3.2 3.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.76 .64 .46 1</ambient>
+            <diffuse>.76 .64 .46 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>3.5 3.2 3.1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="control_roof">
+      <static>true</static>
+      <pose>-3 -4.1 3.18 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>3.8 3.5 0.16</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.85 .78 .61 1</ambient>
+            <diffuse>.85 .78 .61 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>3.8 3.5 0.16</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="control_windows">
+      <static>true</static>
+      <pose>-1.23 -4.1 1.9 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.03 2.3 0.65</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.17 .35 .42 1</ambient>
+            <diffuse>.17 .35 .42 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="utility_building">
+      <static>true</static>
+      <pose>8 9.5 1.4 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>5.0 2.4 2.8</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.70 .60 .44 1</ambient>
+            <diffuse>.70 .60 .44 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>5.0 2.4 2.8</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="utility_transformer_0">
+      <static>true</static>
+      <pose>5.5 8.1 0.6 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.8 0.65 1.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.39 .44 .43 1</ambient>
+            <diffuse>.39 .44 .43 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.8 0.65 1.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="utility_transformer_1">
+      <static>true</static>
+      <pose>7.0 8.1 0.6 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.8 0.65 1.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.39 .44 .43 1</ambient>
+            <diffuse>.39 .44 .43 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.8 0.65 1.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="utility_transformer_2">
+      <static>true</static>
+      <pose>8.5 8.1 0.6 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.8 0.65 1.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.39 .44 .43 1</ambient>
+            <diffuse>.39 .44 .43 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.8 0.65 1.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="corridor_b_barrier_-1.5">
+      <static>true</static>
+      <pose>6 -1.5 0.45 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>4.8 0.2 0.9</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.76 .65 .24 1</ambient>
+            <diffuse>.76 .65 .24 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>4.8 0.2 0.9</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="corridor_b_barrier_1.5">
+      <static>true</static>
+      <pose>6 1.5 0.45 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>4.8 0.2 0.9</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.76 .65 .24 1</ambient>
+            <diffuse>.76 .65 .24 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>4.8 0.2 0.9</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="entry_gate_post_0">
+      <static>true</static>
+      <pose>-1.9 -1.8 0.7 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.18 0.18 1.4</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.77 .74 .64 1</ambient>
+            <diffuse>.77 .74 .64 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.18 0.18 1.4</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="entry_gate_post_1">
+      <static>true</static>
+      <pose>1.9 -1.8 0.7 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.18 0.18 1.4</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.77 .74 .64 1</ambient>
+            <diffuse>.77 .74 .64 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.18 0.18 1.4</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="open_gate_arm">
+      <static>true</static>
+      <pose>-1.9 -1.8 1.7 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.14 0.14 2.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.92 .84 .30 1</ambient>
+            <diffuse>.92 .84 .30 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.14 0.14 2.2</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_fence_0">
+      <static>true</static>
+      <pose>21 2 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.12 15 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.43 .46 .44 .8</ambient>
+            <diffuse>.43 .46 .44 .8</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.12 15 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_fence_1">
+      <static>true</static>
+      <pose>-5.5 2 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>0.12 17 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.43 .46 .44 .8</ambient>
+            <diffuse>.43 .46 .44 .8</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>0.12 17 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_fence_2">
+      <static>true</static>
+      <pose>8 11.5 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>27 0.12 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.43 .46 .44 .8</ambient>
+            <diffuse>.43 .46 .44 .8</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>27 0.12 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="perimeter_fence_3">
+      <static>true</static>
+      <pose>8 -8 1.0 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>27 0.12 2.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.43 .46 .44 .8</ambient>
+            <diffuse>.43 .46 .44 .8</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <box>
+              <size>27 0.12 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="restricted_yard_marker">
+      <static>true</static>
+      <pose>18 -5 0.03 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <box>
+              <size>3 3 0.04</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.66 .32 .16 1</ambient>
+            <diffuse>.66 .32 .16 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="personnel_0">
+      <static>true</static>
+      <pose>-1 -3.8 0.9 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.23</radius>
+              <length>1.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.94 .49 .10 1</ambient>
+            <diffuse>.94 .49 .10 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.23</radius>
+              <length>1.3</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="personnel_helmet_0">
+      <static>true</static>
+      <pose>-1 -3.8 1.72 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <sphere>
+              <radius>0.22</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>.98 .87 .22 1</ambient>
+            <diffuse>.98 .87 .22 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <sphere>
+              <radius>0.22</radius>
+            </sphere>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="personnel_1">
+      <static>true</static>
+      <pose>16.8 7.5 0.9 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.23</radius>
+              <length>1.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.94 .49 .10 1</ambient>
+            <diffuse>.94 .49 .10 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.23</radius>
+              <length>1.3</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="personnel_helmet_1">
+      <static>true</static>
+      <pose>16.8 7.5 1.72 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <sphere>
+              <radius>0.22</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>.98 .87 .22 1</ambient>
+            <diffuse>.98 .87 .22 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <sphere>
+              <radius>0.22</radius>
+            </sphere>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="personnel_2">
+      <static>true</static>
+      <pose>5 8.5 0.9 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <cylinder>
+              <radius>0.23</radius>
+              <length>1.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>.94 .49 .10 1</ambient>
+            <diffuse>.94 .49 .10 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <cylinder>
+              <radius>0.23</radius>
+              <length>1.3</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <model name="personnel_helmet_2">
+      <static>true</static>
+      <pose>5 8.5 1.72 0 0 0</pose>
+      <link name="body">
+        <visual name="surface">
+          <geometry>
+            <sphere>
+              <radius>0.22</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>.98 .87 .22 1</ambient>
+            <diffuse>.98 .87 .22 1</diffuse>
+          </material>
+        </visual>
+        <collision name="solid">
+          <geometry>
+            <sphere>
+              <radius>0.22</radius>
+            </sphere>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    <include>
+      <uri>model://oil_robot</uri>
+      <name>robot</name>
+      <pose>0 0 0.02 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

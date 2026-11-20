@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.9">
+  <model name="terrain">
+    <static>true</static>
+    <pose>0 0 0 0 0 0</pose>
+    <link name="link">
+      <visual name="visual_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://terrain/meshes/hills.obj</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>.27 .35 .17 1</ambient>
+          <diffuse>.27 .35 .17 1</diffuse>
+        </material>
+      </visual>
+      <collision name="collision_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://terrain/meshes/hills.obj</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>1</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,133 @@
+{
+  "scenario": "industrial",
+  "world": "industrial",
+  "frame": "world",
+  "nodes": {
+    "start": [
+      0,
+      -2
+    ],
+    "fork": [
+      4,
+      -2
+    ],
+    "trail_a": [
+      10,
+      -2
+    ],
+    "trail_b": [
+      4,
+      6
+    ],
+    "merge": [
+      10,
+      6
+    ],
+    "safety": [
+      16,
+      6
+    ]
+  },
+  "edges": [
+    {
+      "id": "approach",
+      "source": "start",
+      "target": "fork",
+      "length": 4.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_a",
+      "source": "fork",
+      "target": "trail_a",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "exit_a",
+      "source": "trail_a",
+      "target": "safety",
+      "length": 10.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_b",
+      "source": "fork",
+      "target": "trail_b",
+      "length": 8.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "bypass",
+      "source": "trail_b",
+      "target": "merge",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "exit_b",
+      "source": "merge",
+      "target": "safety",
+      "length": 6.0,
+      "initial_state": "unknown"
+    }
+  ],
+  "start": "start",
+  "goal": "safety",
+  "robot_start": [
+    0,
+    0,
+    0.02
+  ],
+  "human_start": [
+    0,
+    -2,
+    0.02
+  ],
+  "uav_start": [
+    6,
+    0,
+    8
+  ],
+  "hazards": [
+    {
+      "id": "hazard_debris",
+      "model": "hazard_debris",
+      "edge": "trail_a",
+      "position": [
+        7,
+        -2,
+        0.6
+      ],
+      "at": 3.0,
+      "kind": "debris",
+      "radius": 2.0
+    },
+    {
+      "id": "hazard_fire",
+      "model": "hazard_fire",
+      "edge": "exit_a",
+      "position": [
+        12,
+        0.7,
+        0
+      ],
+      "at": 24.0,
+      "kind": "fire",
+      "radius": 1.6
+    },
+    {
+      "id": "hazard_gas",
+      "model": "hazard_gas",
+      "edge": "exit_a",
+      "position": [
+        13.2,
+        2.2,
+        0
+      ],
+      "at": 38.0,
+      "kind": "gas",
+      "radius": 1.8
+    }
+  ]
+}

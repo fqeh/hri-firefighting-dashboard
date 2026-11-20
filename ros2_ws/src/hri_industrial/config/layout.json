@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "name": "Fictional Desert Energy Research Facility",
+  "world": "oil_facility",
+  "nodes": {
+    "gate": [
+      0,
+      0
+    ],
+    "junction": [
+      3,
+      0
+    ],
+    "corridor_b": [
+      9,
+      0
+    ],
+    "north_junction": [
+      3,
+      6
+    ],
+    "north_service": [
+      9,
+      6
+    ],
+    "assembly": [
+      15,
+      6
+    ],
+    "south_junction": [
+      3,
+      -5
+    ],
+    "south_service": [
+      15,
+      -5
+    ]
+  },
+  "edges": [
+    {
+      "id": "access",
+      "source": "gate",
+      "target": "junction",
+      "length": 3.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "corridor_b",
+      "source": "junction",
+      "target": "corridor_b",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "east_exit",
+      "source": "corridor_b",
+      "target": "assembly",
+      "length": 8.48528137423857,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "corridor_c",
+      "source": "junction",
+      "target": "north_junction",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "north_road",
+      "source": "north_junction",
+      "target": "north_service",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "assembly_road",
+      "source": "north_service",
+      "target": "assembly",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "corridor_d",
+      "source": "junction",
+      "target": "south_junction",
+      "length": 5.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "south_road",
+      "source": "south_junction",
+      "target": "south_service",
+      "length": 12.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "south_exit",
+      "source": "south_service",
+      "target": "assembly",
+      "length": 11.0,
+      "initial_state": "unknown"
+    }
+  ],
+  "start": "gate",
+  "goal": "assembly",
+  "road_widths": {
+    "access": 3.4,
+    "corridor_b": 2.6,
+    "east_exit": 3.4,
+    "corridor_c": 3.4,
+    "north_road": 3.4,
+    "assembly_road": 3.4,
+    "corridor_d": 3.4,
+    "south_road": 3.4,
+    "south_exit": 3.4
+  },
+  "initial_survey_edges": [
+    "access",
+    "corridor_b",
+    "east_exit",
+    "corridor_c",
+    "north_road",
+    "assembly_road",
+    "corridor_d",
+    "south_road",
+    "south_exit"
+  ],
+  "survey_assumption": "Commissioned public road survey at t=0; later incidents are unknown until robot sensors observe them. No live truth input.",
+  "bounds": [
+    -7,
+    -10,
+    24,
+    13
+  ],
+  "mask_resolution": 0.15,
+  "max_route_exposure": 0.0,
+  "connector_tolerance_m": 0.45,
+  "hazard_radii": {
+    "debris": 1.8,
+    "fire": 2.0,
+    "gas": 2.0
+  },
+  "destinations": {
+    "junction": "Road junction",
+    "corridor_b": "Corridor B service point",
+    "assembly": "East assembly point",
+    "north_junction": "North emergency exit",
+    "south_service": "South utility station"
+  },
+  "assets_note": "Original Apache-2.0 SDF primitives; robot and hazard models reused from hri_sim."
+}

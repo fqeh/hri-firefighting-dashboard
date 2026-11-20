@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "incidents": [
+    {
+      "event_id": "tank_damage_aftermath",
+      "display_name": "Tank TK-01 damage aftermath",
+      "event_type": "tank_damage_aftermath",
+      "equipment_id": "TK-01",
+      "tank_model": "tank_0",
+      "visual_entity": "tank_0_damage_visual",
+      "visual_model": "tank_damage_visual",
+      "visual_position": [6.0, 3.6, 1.6],
+      "hazard": {
+        "id": "hazard_debris_tk01_aftermath",
+        "kind": "debris",
+        "model": "hazard_debris",
+        "edge": "north_road",
+        "position": [6.0, 6.0, 0.6],
+        "radius": 1.8
+      },
+      "at": 1000000000.0,
+      "manual_only": true,
+      "aftermath_note": "Fictional, operator-triggered visual damage and a separate configured debris road blocker. No impact dynamics, no combustion, no material release, no dispersion, and no equipment process telemetry is modeled."
+    }
+  ]
+}

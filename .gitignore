@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.runtime/
+node_modules/
+dashboard/dist/
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+results/*
+!results/.gitkeep
+!results/VALIDATION.md
+.env

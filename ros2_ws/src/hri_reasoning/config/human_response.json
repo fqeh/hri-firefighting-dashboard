@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "note": "Modeled trust/compliance, not measured human trust",
+  "base_compliance": 1.0,
+  "soft_multiplier": 0.55,
+  "acknowledgement_probability": 0.95,
+  "acknowledgement_delay_s": 0.4,
+  "route_change_probability": 1.0,
+  "trust_floor": 0.05,
+  "alert_fatigue": 0.005,
+  "verified_information_gain": 0.01
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "units": "dimensionless research loss; distances metres; delays simulation seconds",
+  "costs": {"missed_danger": 30.0, "unnecessary_alert": 4.0, "soft_interruption": 0.4, "explicit_interruption": 1.5, "hazard_exposure": 12.0, "evacuation_delay": 0.08, "repeated_warning": 3.0, "observation": 1.0},
+  "response": {"soft_effectiveness": 0.4, "explicit_effectiveness": 0.85, "soft_delay_s": 0.5, "explicit_delay_s": 1.5, "observation_delay_s": 3.0, "observation_accuracy": 0.8},
+  "dynamics": {"completion_probability": 0.12, "local_discovery": 0.15, "urgency_progress": 0.25, "acknowledgement_probability": 0.9},
+  "thresholds": {"aware_probability": 0.2, "unaware_probability": 0.7, "observe_uncertainty": 0.5, "repeat_cooldown_s": 12.0, "acknowledgement_hold_s": 25.0, "emergency_repeat_s": 6.0, "proximity_m": 4.0, "near_distance_m": 4.0, "emergency_distance_m": 1.5},
+  "severity_by_kind": {"tree": 1.0, "debris": 1.0, "fire": 1.5, "gas": 2.0},
+  "urgency_multipliers": [0.25, 1.0, 3.0],
+  "severity_bins": [0.5, 1.0, 2.0],
+  "probability_bins": 5,
+  "discount": 0.9,
+  "step_seconds": 3.0,
+  "require_informative_action": true,
+  "route": {"exposure_weight": 3.0, "unknown_penalty": 1.5, "fire_exposure_cost": 8.0},
+  "q_learning": {"seed": 7, "episodes": 18000, "steps": 30, "alpha": 0.15, "epsilon": 0.25, "evaluation_seed": 1007}
+}
