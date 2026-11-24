@@ -4,6 +4,19 @@ import type {EquipmentContentsUpdate} from './transport';
 
 export function SourceTag({source}:{source:string}){return <span className={`source-tag ${source}`} title="Data origin">{source==='simulation_truth'?'SIM TRUTH':source==='configuration'?'MAP PRIOR':source.toUpperCase()}</span>;}
 export function Stamp({topic}:{topic?:Topic}){return <span className={`stamp ${topic?.stale?'stale':''}`}>{topic?`${fmt(topic.sim_stamp)}s sim${topic.stale?' · STALE':''}`:'Awaiting update'}</span>;}
+export const CONCEPTS={
+  tom:{label:'Bayesian Theory of Mind',lecture:'W2·D1',detail:'Inverse planning with a Boltzmann-rational crew model (rationality β); false belief.'},
+  hmm:{label:'HMM belief filtering',lecture:'W2·D2',detail:'Predict–update filter over the crew’s route-belief hypotheses.'},
+  mdp:{label:'MDP · expected loss',lecture:'W3·D1',detail:'Each action is scored by its expected loss; the lowest wins.'},
+  vi:{label:'Value iteration · Q-learning',lecture:'W3',detail:'Optional engines that solve the same communication MDP.'},
+  trust:{label:'Trust calibration',lecture:'W1·D2',detail:'Not more trust but appropriate trust: false alarms erode it.'},
+} as const;
+export type Concept=keyof typeof CONCEPTS;
+
+export function ConceptChips({items}:{items:Concept[]}){
+  return <span className="concept-chips">{items.map(k=><span key={k} className={`concept-chip ${k}`} title={CONCEPTS[k].detail}><b>{CONCEPTS[k].lecture}</b>{CONCEPTS[k].label}</span>)}</span>;
+}
+
 export function Panel({title,tag,children,className='',id}:{title:string;tag?:ReactNode;children:ReactNode;className?:string;id?:string}){return <section className={`panel ${className}`} id={id}><div className="panel-title"><h2>{title}</h2>{tag}</div>{children}</section>;}
 export function Fact({label,children}:{label:string;children:ReactNode}){return <div className="fact"><dt>{label}</dt><dd>{children}</dd></div>;}
 
@@ -24,7 +37,7 @@ export function BeliefPanel({topic,evidence,decision}:{topic?:Topic;evidence?:To
   const belief=selected&&beliefs[selected]?obj(beliefs[selected]):message,posterior=obj(belief.posterior);
   const dominant=Object.entries(posterior).sort((a,b)=>Number(b[1])-Number(a[1]))[0];
   const action=obj(message.last_operator_evidence??message.last_movement_evidence);
-  return <Panel title="Human belief estimate" tag={<SourceTag source="inference"/>} id="belief">
+  return <Panel title="Human belief estimate" tag={<span className="inline"><ConceptChips items={['tom','hmm']}/><SourceTag source="inference"/></span>} id="belief">
     <div className="panel-body">
       <div className="inline spread"><label>Route <select aria-label="Belief route" value={selected} onChange={e=>setSelected(e.target.value)}><option value="">Current focus · {human(message.edge)}</option>{Object.keys(beliefs).map(e=><option key={e} value={e}>{human(e)}</option>)}</select></label><Stamp topic={topic}/></div>
       <div className="belief-head"><div><span className="eyebrow">DANGEROUS MISMATCH</span><strong data-testid="mismatch">{percent(belief.p_mismatch)}</strong></div><p>{dominant?<>Most likely: <b>{human(dominant[0])}</b><br/>{percent(dominant[1])} posterior probability</>:'Waiting for observed actions and information opportunities.'}</p></div>

@@ -19,6 +19,17 @@ it('treats silent connections and malformed payloads as unavailable',()=>{
   act(()=>Events.instances[0].onmessage?.({data:JSON.stringify(packet())}));act(()=>vi.advanceTimersByTime(5000));expect(result.current.online).toBe(false);
   act(()=>vi.advanceTimersByTime(1000));act(()=>Events.instances.at(-1)?.onmessage?.({data:'{"topics":null}'}));expect(result.current.error).toMatch(/Rejected telemetry/);
 });
+it('polls the state endpoint when a proxy holds back the event stream',async()=>{
+  vi.useFakeTimers();vi.stubGlobal('EventSource',Events);
+  const fetch=vi.fn().mockResolvedValue({ok:true,json:async()=>packet('tunnel')});vi.stubGlobal('fetch',fetch);
+  const {result}=renderHook(useTelemetry);
+  await act(async()=>{await vi.advanceTimersByTimeAsync(5100);});  // stream opened, nothing delivered
+  expect(Events.instances[0].readyState).toBe(2);
+  expect(fetch.mock.calls[0][0]).toBe('/api/state');
+  expect(result.current.state?.epoch).toBe('tunnel');expect(result.current.online).toBe(true);
+  await act(async()=>{await vi.advanceTimersByTimeAsync(1100);});
+  expect(fetch.mock.calls.length).toBeGreaterThanOrEqual(3);expect(Events.instances).toHaveLength(1);  // keeps polling, no SSE retries
+});
 it('sends typed commands and surfaces server rejection',async()=>{
   const fetch=vi.fn().mockResolvedValue({ok:true,json:async()=>({})});vi.stubGlobal('fetch',fetch);
   await sendControl({command:'approve_route',revision:3});expect(JSON.parse(fetch.mock.calls[0][1].body)).toEqual({command:'approve_route',revision:3});

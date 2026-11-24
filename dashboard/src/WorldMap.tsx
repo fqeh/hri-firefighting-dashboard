@@ -27,7 +27,7 @@ export function WorldMap({topics,parameters,showTruth}:{topics:Record<string,Top
       return <g key={str(e.id)} data-edge={str(e.id)} data-state={state}><title>{human(e.id)}: {state} · inferred from public observations</title>
         <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#22393c" strokeWidth="14" strokeLinecap="round"/>
         <line x1={x1} y1={y1} x2={x2} y2={y2} className={`edge edge-${state}`}/>
-        {state==='blocked'&&<text x={(x1+x2)/2} y={(y1+y2)/2-10} className="blocked-label">× BLOCKED</text>}
+        {state==='blocked'&&<text x={(x1+x2)/2} y={(y1+y2)/2+24} textAnchor="middle" className="blocked-label">× BLOCKED</text>}
       </g>;
     })}
     {showTruth&&arr(topics['/forest/fire_state']?.data.zones).map((v,i)=>{const zone=obj(v);return <polygon key={i} points={arr(zone.polygon).flatMap(p=>point(p)?[xy(point(p)!).join(',')]:[]).join(' ')} fill="#ff802744" stroke="#ffb166" strokeDasharray="2 4"><title>Fire model ground truth · unvalidated research envelope</title></polygon>;})}
@@ -37,8 +37,8 @@ export function WorldMap({topics,parameters,showTruth}:{topics:Record<string,Top
     {hazards.map(h=>{const [x,y]=xy(point(h.position)!);return <g key={str(h.id)} opacity={h.observation_stale===true?.5:1} data-hazard={str(h.id)}>
       <title>{`${human(h.kind)} · observed by ${str(h.source)} at ${str(h.last_seen_stamp)}s. ${h.observation_stale===true?'Last seen; not a current observation.':''}`}</title>
       <circle cx={x} cy={y} r={Math.max(9,(num(h.radius)??1)*scale)} className={h.kind==='gas'?'gas-zone':'hazard-zone'}/>
-      <text x={x+9} y={y-14} className="hazard-label">{human(h.kind).toUpperCase()}{h.observation_stale===true?' · LAST SEEN':''}</text>
     </g>;})}
+    {hazardLabels(hazards,xy).map(l=><text key={l.key} x={l.x} y={l.y} className="hazard-label">{l.text}</text>)}
     {Object.entries(nodes).map(([id,v])=>{const p=point(v);if(!p)return null;const [x,y]=xy(p);return <g key={id}><circle cx={x} cy={y} r="3" fill="#c2d5d1"/><text x={x+6} y={y+20} className="node-label">{human(id)}</text></g>;})}
     {showTruth&&arr(parameters.personnel).map((v,i)=>{const p=point(v);if(!p)return null;const [x,y]=xy(p);return <g key={i}><circle cx={x} cy={y} r="6" fill="#c4b1fc"/><text x={x+10} y={y+4} className="node-label">Personnel · configured</text><title>Static personnel location · simulation configuration truth, not robot observation</title></g>;})}
     {positions.map(e=>{const [x,y]=xy(e.point);const color=e.name==='Crew'?'#d0b2ff':e.name==='UAV'?'#f8d47e':'#8ce3e4';return <g key={e.name} opacity={e.stale?.45:1} data-entity={e.name}>
@@ -47,4 +47,22 @@ export function WorldMap({topics,parameters,showTruth}:{topics:Record<string,Top
     </g>;})}
     <text x="18" y="350" className="map-unit">WORLD FRAME · METRES</text>
   </svg>;
+}
+
+// One label per hazard kind and route segment ("FIRE ×12"), placed at the
+// cluster's highest point, instead of one overlapping label per patch.
+function hazardLabels(hazards:Dict[],xy:(p:Point)=>Point){
+  const groups=new Map<string,{kind:string;count:number;stale:boolean;top:Point}>();
+  for(const h of hazards){
+    const [x,y]=xy(point(h.position)!),key=`${str(h.kind)}:${str(h.edge,'')}`,g=groups.get(key);
+    if(!g)groups.set(key,{kind:str(h.kind),count:1,stale:h.observation_stale===true,top:[x,y]});
+    else{g.count+=1;g.stale=g.stale&&h.observation_stale===true;if(y<g.top[1])g.top=[x,y];}
+  }
+  const placed:Point[]=[];
+  return [...groups.entries()].map(([key,g])=>{
+    let [x,y]=[g.top[0]+10,g.top[1]-16];
+    while(placed.some(p=>Math.abs(p[0]-x)<70&&Math.abs(p[1]-y)<13))y-=14;
+    placed.push([x,y]);
+    return {key,x,y,text:`${human(g.kind).toUpperCase()}${g.count>1?` ×${g.count}`:''}${g.stale?' · LAST SEEN':''}`};
+  });
 }
