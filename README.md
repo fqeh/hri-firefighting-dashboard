@@ -1,5 +1,7 @@
 # Belief-Aware Warnings for Human–Robot Firefighting Teams
 
+**Live demo:** https://eos-association-tourist-vocational.trycloudflare.com/ — the single-screen dashboard running on the project server through a Cloudflare quick tunnel. It is public, open to control (the scenarios are fictional) and temporary: the address changes when the tunnel restarts. See [docs/DEMO_DASHBOARD.md](docs/DEMO_DASHBOARD.md).
+
 A university HRI research prototype using **real Gazebo Harmonic physics and sensors**, ROS 2 Jazzy, Bayesian belief inference, and a local React/TypeScript supervisor. The research question is whether targeted warnings about a teammate's outdated route knowledge can improve simulated outcomes with fewer interruptions.
 
 Gazebo owns every physical entity and all motion. Python implements behavior, inference, communication decisions and scoring—not a replacement environment. The diagnostic waypoint map is not the simulator.
