@@ -1,5 +1,20 @@
 # 5–10 minute demonstration script
 
+## Presentation demo (single-screen dashboard, current)
+
+1. **Introduce the actors.** Use the figures in the presentation: lookout (UAV or robot), human (crew or operator), hazards, goal.
+2. **Crew unaware.** Scenario → **Crew unaware** → **Load scenario & policy** → wait for the load → Layers: hide **Trees** → **▶ Resume**.
+   - About 5 s: the crew walks from Start towards Fork, skipping the north route (Trail D). The ToM counts it as evidence that they think A or B is open.
+   - About 9 s: the tree falls on Trail A (t = 8 s), the UAV sees it (*Observe* turns red), and B4 warns at once (P ≈ 69 % above the bar). Pause here to explain the floating belief map (W2: ToM + HMM) and *Should the lookout speak?* (W3).
+   - About 13 s: the crew turns to Trail B and the belief map turns Trail A red (`=`). **Acknowledge** the warning.
+3. **Crew knows.** Same steps with **Crew knows**: no warning. In *Same moment, four policies*, B3 would warn but B4 stays silent: the false alarm that erodes trust (W1·D2).
+4. **Escalation (optional).** In F, inject the tree on Trail B and fire + smoke on Trails C and D. When the fourth route closes, **No escape route · Send operator** appears. Press **Send operator**.
+5. **Oil facility.** Case *unaware*, B4. In Robot, set East assembly point via Corridor b → Request → Approve. About 8 s: debris, then a warning to the operator → Acknowledge → approve the new revision. *no_safe* shows the robot refusing to move when no safe route exists.
+
+See [DEMO_DASHBOARD.md](DEMO_DASHBOARD.md) for every control.
+
+## Earlier script (tabbed console)
+
 Use the [Phase 6 screenshots and walkthrough](PHASE6_VALIDATION.md) if a live simulator is unavailable. Do not describe a recorded image as a current live run.
 
 ## 0:00–1:00 — System and evidence

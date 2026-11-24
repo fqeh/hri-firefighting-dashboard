@@ -9,6 +9,7 @@ Checked against upstream sources on 2026-11-13. Runtime-selected versions are re
 | ros_gz | Jazzy branch/package | [ros_gz](https://github.com/gazebosim/ros_gz/tree/jazzy), Apache-2.0 |
 | Navigation2 | Jazzy packages | [Nav2](https://github.com/ros-navigation/navigation2/tree/jazzy), per-package Apache-2.0/BSD/LGPL, [license inventory](https://github.com/ros-navigation/navigation2/blob/jazzy/LICENSE) |
 | RViz2 | Jazzy packages | [rviz](https://github.com/ros2/rviz), BSD-3-Clause |
+| three.js 0.187.0 | Web 3D world view | [three.js](https://github.com/mrdoob/three.js) MIT |
 | React / TypeScript / Vite | Exact frontend versions in package-lock.json | [React](https://github.com/facebook/react) MIT; [TypeScript](https://github.com/microsoft/TypeScript) Apache-2.0; [Vite](https://github.com/vitejs/vite) MIT |
 
 The [official Gazebo compatibility table](https://gazebosim.org/docs/latest/ros_installation/) pairs Jazzy with Harmonic. Installing `ros-jazzy-ros-gz` selects the matching Gazebo vendor dependencies. Do not mix Gazebo Classic, Humble binaries, or newer Gazebo major versions into this workspace. The [Jazzy bridge type matrix](https://github.com/gazebosim/ros_gz/blob/jazzy/ros_gz_bridge/README.md) includes all standard messages and LogicalCameraImage used here.

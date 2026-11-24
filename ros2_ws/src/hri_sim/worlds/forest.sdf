@@ -183,6 +183,114 @@
         </visual>
       </link>
     </model>
+    <model name="route_trail_c">
+      <static>true</static>
+      <pose>4.0 -5.0 .006 0 0 -1.5707963267948966</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>6.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.52 .44 .31 1</ambient>
+            <diffuse>.52 .44 .31 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_trail_c_east">
+      <static>true</static>
+      <pose>11.0 -8.0 .006 0 0 0.0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>14.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.52 .44 .31 1</ambient>
+            <diffuse>.52 .44 .31 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_exit_c">
+      <static>true</static>
+      <pose>17.0 -1.0 .006 0 0 1.7126933813990606</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>14.142135623730951 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.52 .44 .31 1</ambient>
+            <diffuse>.52 .44 .31 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_trail_d">
+      <static>true</static>
+      <pose>-0.5 3.25 .006 0 0 1.6657480331376529</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>10.547511554864494 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.52 .44 .31 1</ambient>
+            <diffuse>.52 .44 .31 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_trail_d_east">
+      <static>true</static>
+      <pose>7.5 8.5 .006 0 0 0.0</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>17.0 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.52 .44 .31 1</ambient>
+            <diffuse>.52 .44 .31 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="route_exit_d">
+      <static>true</static>
+      <pose>16.0 7.25 .006 0 0 -1.5707963267948966</pose>
+      <link name="link">
+        <visual name="visual_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.5 2.2 .01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.52 .44 .31 1</ambient>
+            <diffuse>.52 .44 .31 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
     <model name="safety_zone">
       <static>true</static>
       <pose>16 6 .018 0 0 0</pose>
@@ -368,7 +476,7 @@
     </model>
     <model name="tree_2">
       <static>true</static>
-      <pose>-2 4 0 0 0 0</pose>
+      <pose>-2.6 4 0 0 0 0</pose>
       <link name="tree">
         <collision name="trunk_collision">
           <pose>0 0 2.1 0 0 0</pose>
@@ -432,7 +540,7 @@
     </model>
     <model name="tree_3">
       <static>true</static>
-      <pose>0 5 0 0 0 0</pose>
+      <pose>1.8 4.5 0 0 0 0</pose>
       <link name="tree">
         <collision name="trunk_collision">
           <pose>0 0 2.275 0 0 0</pose>
@@ -496,7 +604,7 @@
     </model>
     <model name="tree_4">
       <static>true</static>
-      <pose>1 9 0 0 0 0</pose>
+      <pose>-0.5 11.2 0 0 0 0</pose>
       <link name="tree">
         <collision name="trunk_collision">
           <pose>0 0 1.75 0 0 0</pose>
@@ -944,7 +1052,7 @@
     </model>
     <model name="tree_11">
       <static>true</static>
-      <pose>17 0 0 0 0 0</pose>
+      <pose>14.2 -3.5 0 0 0 0</pose>
       <link name="tree">
         <collision name="trunk_collision">
           <pose>0 0 2.275 0 0 0</pose>
@@ -1136,7 +1244,7 @@
     </model>
     <model name="tree_14">
       <static>true</static>
-      <pose>4 -5 0 0 0 0</pose>
+      <pose>2 -6 0 0 0 0</pose>
       <link name="tree">
         <collision name="trunk_collision">
           <pose>0 0 2.1 0 0 0</pose>
@@ -1392,7 +1500,7 @@
     </model>
     <model name="tree_18">
       <static>true</static>
-      <pose>1 2 0 0 0 0</pose>
+      <pose>1.6 2.2 0 0 0 0</pose>
       <link name="tree">
         <collision name="trunk_collision">
           <pose>0 0 2.1 0 0 0</pose>

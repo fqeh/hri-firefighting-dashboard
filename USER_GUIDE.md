@@ -1,5 +1,7 @@
 # User guide
 
+> The current presentation UI is a single-screen dashboard (no Live/Details/Experiment tabs); see [docs/DEMO_DASHBOARD.md](docs/DEMO_DASHBOARD.md). The walkthrough below describes the earlier tabbed console; its controls still exist in the Scenario, Robot, Experiment and Log sections.
+
 ## Start a demonstration
 
 1. Start Docker Desktop.

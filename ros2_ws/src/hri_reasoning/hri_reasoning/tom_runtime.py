@@ -17,7 +17,7 @@ from nav_msgs.msg import Odometry
 from ros_gz_interfaces.msg import LogicalCameraImage
 from .core import WarningPolicy, pose_is_fresh
 from .tom import (RouteToM, DEFAULT_PRIOR, DEFAULT_TRANSITION, validate_public_map, MotionStall,
-                  semantic_hazard_kind)
+                  semantic_hazard_kind, semantic_occluder, occluded, SMOKE_RADIUS, hazard_route_state)
 
 
 class PublicNode(Node):
@@ -61,12 +61,34 @@ class PublicPerception(PublicNode):
         if any(source not in ('robot','uav') for source in sources):
             raise ValueError('Observation sources must be robot and/or uav')
         self.known = {}
+        self.smoke = {}
         self.coverage = {edge:set() for edge in self.graph.edges}
         for source in sources:
             self.create_subscription(LogicalCameraImage, f'/{source}/detections',
                 lambda message,s=source: self.observe(message,s), qos_profile_sensor_data)
 
+    def world_point(self, message, model):
+        cp,cq,p = message.pose.position,message.pose.orientation,model.pose.position
+        ux,uy,uz = cq.x,cq.y,cq.z
+        tx,ty,tz = 2*(uy*p.z-uz*p.y),2*(uz*p.x-ux*p.z),2*(ux*p.y-uy*p.x)
+        return [cp.x+p.x+cq.w*tx+uy*tz-uz*ty,
+                cp.y+p.y+cq.w*ty+uz*tx-ux*tz,cp.z+p.z+cq.w*tz+ux*ty-uy*tx]
+
+    def nearest_edge(self, xyz):
+        edge = min(self.graph.edges.values(), key=lambda e: segment_distance(
+            xyz,self.graph.nodes[e.source],self.graph.nodes[e.target]))
+        return edge, segment_distance(xyz,self.graph.nodes[edge.source],self.graph.nodes[edge.target])
+
     def observe(self, message, source):
+        # Logical cameras have no occlusion model: smoke seen in a frame hides what lies beneath it.
+        for model in message.model:
+            name = model.name.split('::')[0]
+            if semantic_occluder(name) and name not in self.smoke:
+                xyz = self.world_point(message, model)
+                self.smoke[name] = {'id':name,'kind':'smoke','position':xyz,'radius':SMOKE_RADIUS,'edge':self.nearest_edge(xyz)[0].id}
+                self.publish_json('/hri/events', {'source':source,'event':'view_blocked','occluder_id':name,
+                    'edge':self.smoke[name]['edge'],'detail':'Dense smoke: hazards and route segments beneath it cannot be observed'})
+        clouds = [s['position'] for s in self.smoke.values()]
         detected = []
         for model in message.model:
             name = model.name.split('::')[0]
@@ -75,7 +97,9 @@ class PublicPerception(PublicNode):
                 cp,q=message.pose.position,message.pose.orientation
                 for i in range(21):
                     a,b=self.graph.nodes[edge.source],self.graph.nodes[edge.target]
-                    x=a[0]+(b[0]-a[0])*i/20-cp.x;y=a[1]+(b[1]-a[1])*i/20-cp.y;z=.05-cp.z
+                    px,py=a[0]+(b[0]-a[0])*i/20,a[1]+(b[1]-a[1])*i/20
+                    if occluded((px,py),clouds):continue
+                    x=px-cp.x;y=py-cp.y;z=.05-cp.z
                     # World point into the measured sensor frame (inverse quaternion).
                     ux,uy,uz=-q.x,-q.y,-q.z
                     tx,ty,tz=2*(uy*z-uz*y),2*(uz*x-ux*z),2*(ux*y-uy*x)
@@ -87,16 +111,13 @@ class PublicPerception(PublicNode):
             kind = semantic_hazard_kind(name)
             if kind is None:
                 continue
-            cp,cq,p = message.pose.position,message.pose.orientation,model.pose.position
-            ux,uy,uz = cq.x,cq.y,cq.z
-            tx,ty,tz = 2*(uy*p.z-uz*p.y),2*(uz*p.x-ux*p.z),2*(ux*p.y-uy*p.x)
-            xyz = [cp.x+p.x+cq.w*tx+uy*tz-uz*ty,
-                   cp.y+p.y+cq.w*ty+uz*tx-ux*tz,cp.z+p.z+cq.w*tz+ux*ty-uy*tx]
-            edge = min(self.graph.edges.values(), key=lambda e: segment_distance(
-                xyz,self.graph.nodes[e.source],self.graph.nodes[e.target]))
-            if segment_distance(xyz,self.graph.nodes[edge.source],self.graph.nodes[edge.target]) > 3:
+            xyz = self.world_point(message, model)
+            if occluded(xyz,clouds):
                 continue
-            state = 'open_hazardous' if kind in ('fire','gas') else 'blocked'
+            edge,distance = self.nearest_edge(xyz)
+            if distance > 3:
+                continue
+            state = hazard_route_state(name, kind)
             hazard = {'id':name,'kind':kind,'edge':edge.id,'position':xyz,
                       'radius':.6 if '_front_' in name else 2.,'state':state}
             detected.append(hazard)
@@ -104,18 +125,25 @@ class PublicPerception(PublicNode):
                 self.publish_json('/hri/events', {'source':source,'event':'hazard_detected',
                     'hazard_id':name,'edge':edge.id,'sensor':'Gazebo logical camera, geometric map association'})
             self.known[name] = hazard
-        if detected:
+        if clouds:
+            # Segments now under smoke lose their verification until they can be seen again.
+            for edge in self.graph.edges.values():
+                a,b=self.graph.nodes[edge.source],self.graph.nodes[edge.target]
+                self.coverage[edge.id]-={i for i in range(21) if occluded((a[0]+(b[0]-a[0])*i/20,a[1]+(b[1]-a[1])*i/20),clouds)}
+        if detected or self.smoke:
             self.publish_json('/hri/observations', {'source':source,'hazards':detected,
-                'known_edges':{h['edge']:h['state'] for h in self.known.values()}})
+                'known_edges':{h['edge']:h['state'] for h in self.known.values()},
+                **({'occluders':list(self.smoke.values())} if self.smoke else {})})
         self.publish_json('/hri/route_observations',{'source':source,
             'clear_edges':[edge for edge,points in self.coverage.items() if len(points)==21],
-            'assumption':'ideal logical-camera coverage; no visual occlusion model'})
+            'assumption':'ideal logical-camera coverage; smoke is the only modelled occlusion'})
 
 
 class BayesianToM(PublicNode):
     def __init__(self):
         super().__init__('bayesian_tom')
         self.model = RouteToM(self.map, beta=float(self.parameter('assumed_beta',1.2)),
+            hazard_multiplier=float(self.parameter('assumed_hazard_multiplier',4.)),
             lapse=float(self.parameter('assumed_lapse',.03)),
             prior=json.loads(self.parameter('tom_prior',json.dumps(DEFAULT_PRIOR))),
             transition=json.loads(self.parameter('tom_transition',json.dumps(DEFAULT_TRANSITION))))

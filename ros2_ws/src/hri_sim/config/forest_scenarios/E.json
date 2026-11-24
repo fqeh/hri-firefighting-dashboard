@@ -26,6 +26,22 @@
     "safety": [
       16,
       6
+    ],
+    "trail_c": [
+      4,
+      -8
+    ],
+    "c_end": [
+      18,
+      -8
+    ],
+    "trail_d": [
+      -1,
+      8.5
+    ],
+    "d_end": [
+      16,
+      8.5
     ]
   },
   "edges": [
@@ -70,6 +86,48 @@
       "target": "safety",
       "length": 6.0,
       "initial_state": "unknown"
+    },
+    {
+      "id": "trail_c",
+      "source": "fork",
+      "target": "trail_c",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_c_east",
+      "source": "trail_c",
+      "target": "c_end",
+      "length": 14.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "exit_c",
+      "source": "c_end",
+      "target": "safety",
+      "length": 14.142135623730951,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_d",
+      "source": "start",
+      "target": "trail_d",
+      "length": 10.547511554864494,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_d_east",
+      "source": "trail_d",
+      "target": "d_end",
+      "length": 17.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "exit_d",
+      "source": "d_end",
+      "target": "safety",
+      "length": 2.5,
+      "initial_state": "unknown"
     }
   ],
   "start": "start",
@@ -85,8 +143,8 @@
     0.02
   ],
   "uav_start": [
+    4,
     6,
-    0,
     8
   ],
   "hazards": [
@@ -101,7 +159,56 @@
       ],
       "at": 8.0,
       "kind": "tree",
-      "radius": 2.0
+      "radius": 2.0,
+      "display_name": "Fallen tree on Trail A"
+    },
+    {
+      "id": "hazard_tree_b",
+      "model": "hazard_tree",
+      "edge": "trail_b",
+      "position": [
+        4,
+        2,
+        0.45
+      ],
+      "yaw": 1.5707963,
+      "at": 1000000000.0,
+      "kind": "tree",
+      "radius": 2.0,
+      "manual_only": true,
+      "display_name": "Fallen tree on Trail B"
+    },
+    {
+      "id": "hazard_fire_smoke_c",
+      "model": "hazard_fire_smoke",
+      "edge": "trail_c",
+      "position": [
+        4,
+        -5.5,
+        0
+      ],
+      "at": 1000000000.0,
+      "kind": "fire",
+      "state": "blocked",
+      "radius": 2.0,
+      "manual_only": true,
+      "display_name": "Fire and smoke on Trail C"
+    },
+    {
+      "id": "hazard_fire_smoke_d",
+      "model": "hazard_fire_smoke",
+      "edge": "trail_d",
+      "position": [
+        -0.6,
+        4,
+        0
+      ],
+      "at": 1000000000.0,
+      "kind": "fire",
+      "state": "blocked",
+      "radius": 2.0,
+      "manual_only": true,
+      "display_name": "Fire and smoke on Trail D"
     }
   ],
   "case": "E",
@@ -171,9 +278,32 @@
         6,
         0,
         8
+      ],
+      [
+        6,
+        -5,
+        8
+      ],
+      [
+        16,
+        -5,
+        8
+      ],
+      [
+        16,
+        0,
+        8
+      ],
+      [
+        6,
+        0,
+        8
       ]
     ],
     "loop": true,
-    "camera_hfov": 1.2
-  }
+    "camera_hfov": 1.2,
+    "observe_dwell_s": 5.0
+  },
+  "ground_robot": false,
+  "hazard_multiplier": 8.0
 }

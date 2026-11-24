@@ -8,7 +8,7 @@ from rclpy.qos import qos_profile_sensor_data
 from .tom_runtime import PublicNode,run
 from .core import pose_is_fresh
 from .warning_model import Context,DecisionPolicy,validate_config
-from .route_risk import recommend
+from .route_risk import recommend,escape_route_exists
 
 
 def load_policy(node):
@@ -36,8 +36,10 @@ class RescueRouting(PublicNode):
     def __init__(self):
         super().__init__('rescue_routing')
         self.settings=load_policy(self)
-        self.hazards={};self.clear=set();self.positions={};self.signatures={};self.revisions={}
+        self.hazards={};self.clear=set();self.clear_by_source={};self.positions={};self.signatures={};self.revisions={}
         self.robot_origin=[float(self.parameter('robot_origin_x',0.)),float(self.parameter('robot_origin_y',0.))]
+        self.trapped=False;self.trapped_since=None;self.dispatched_at=None
+        self.subscribe_json('/hri/control',self.control)
         self.subscribe_json('/hri/observations',self.observe)
         self.subscribe_json('/hri/route_observations',self.coverage)
         for entity,topic in (('crew','/human/odom'),('robot','/robot/odom')):
@@ -53,7 +55,35 @@ class RescueRouting(PublicNode):
     def observe(self,data):
         for h in data.get('hazards',[]):self.hazards[h['id']]={**h,'observed_at':data['stamp'],'source':data['source']}
 
-    def coverage(self,data):self.clear.update(data.get('clear_edges',[]))
+    # Escalation to the human operator: when every escape route is closed the crew cannot
+    # evacuate on foot, so warning the crew is no longer enough.
+    def escalate(self,plan,position):
+        nodes=self.map['nodes'];now=self.stamp()
+        start=min(nodes,key=lambda n:math.dist(position[:2],nodes[n]))
+        blocked=sorted(e for e,s in plan['edge_states'].items() if s=='blocked')
+        trapped=not escape_route_exists(self.map,start,set(blocked))
+        if trapped!=self.trapped:
+            self.trapped=trapped;self.trapped_since=now if trapped else None
+            if not trapped:self.dispatched_at=None
+            self.publish_json('/hri/events',{'event':'no_escape_route' if trapped else 'escape_route_available',
+                'source':'rescue_routing','blocked_edges':blocked,'crew_node':start})
+        self.publish_json('/hri/escalation',{'active':trapped,'level':'critical' if trapped else 'none',
+            'reason':'no_escape_route' if trapped else None,'blocked_edges':blocked,'crew_node':start,
+            'crew_position':list(position[:2]),'since':self.trapped_since,'operator_dispatched_at':self.dispatched_at,
+            'requested_action':'send_operator' if trapped and self.dispatched_at is None else None,
+            'message':('Every escape route to the safety zone is blocked. The crew cannot evacuate on foot: '
+                       'send an operator (rescue team or aerial extraction).') if trapped else 'At least one escape route is open.'})
+
+    def control(self,data):
+        if data.get('command')=='send_operator' and self.trapped and self.dispatched_at is None:
+            self.dispatched_at=self.stamp()
+            self.publish_json('/hri/events',{'event':'operator_dispatched','source':'operator',
+                'detail':'Human operator dispatched a rescue; the rescue itself is not simulated.'})
+
+    def coverage(self,data):
+        # Latest cumulative list per sensor, so a segment can lose verification (e.g. under smoke).
+        self.clear_by_source[data.get('source','')]=set(data.get('clear_edges',[]))
+        self.clear=set().union(*self.clear_by_source.values())
 
     def tick(self):
         for entity,(position,stamp) in self.positions.items():
@@ -67,6 +97,7 @@ class RescueRouting(PublicNode):
                 replan_duration_ms=(time.perf_counter()-start)*1000,
                 source='public logical-camera coverage and observed hazard geometry',
                 observed_hazards=list(self.hazards.values()))
+            if entity=='crew':self.escalate(plan,position)
             topic='/hri/rescue_route' if entity=='crew' else '/hri/robot_route'
             self.publish_json(topic,plan)
             if entity=='crew':self.publish_json('/hri/routes',plan)

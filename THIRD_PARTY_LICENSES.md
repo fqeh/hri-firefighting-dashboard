@@ -10,6 +10,8 @@ Original project code and generated SDF/terrain assets are distributed under Apa
 | Navigation2 | Planning and navigation | Per-package Apache-2.0/BSD/LGPL; [Nav2 license inventory](https://github.com/ros-navigation/navigation2/blob/jazzy/LICENSE) |
 | RViz2 | Optional ROS visualization | BSD-3-Clause; [RViz](https://github.com/ros2/rviz) |
 | React / React DOM | Dashboard runtime | MIT; [React](https://github.com/facebook/react) |
+| three.js (0.187.0) | Dashboard web 3D view | MIT; [three.js](https://github.com/mrdoob/three.js) |
+| cloudflared (optional, not vendored) | `scripts/run_public.sh` remote sharing | Apache-2.0; [cloudflared](https://github.com/cloudflare/cloudflared) |
 | TypeScript | Type checking and compilation | Apache-2.0; [TypeScript](https://github.com/microsoft/TypeScript) |
 | Vite / Vitest | Frontend build and tests | MIT; pinned versions in `dashboard/package-lock.json` |
 

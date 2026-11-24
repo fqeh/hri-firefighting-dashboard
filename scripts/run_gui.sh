@@ -73,5 +73,7 @@ if [[ "$ready" != true ]]; then echo 'Gazebo world service did not become availa
 gz sim -g --gui-config /work/docker/gazebo-gui.config -v 3 >"$output/gazebo-gui.log" 2>&1 &
 gui_pid=$!
 pids+=("$gui_pid")
+# Fit the Gazebo window to whatever desktop size HRI_GUI_SIZE selects.
+(timeout 60s xdotool search --sync --onlyvisible --name 'Gazebo Sim' windowmove 0 0 windowsize 100% 100% >/dev/null 2>&1 || true) &
 echo 'Gazebo desktop: http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale'
 wait -n "${pids[@]}"

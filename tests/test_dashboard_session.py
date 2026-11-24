@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import tempfile
 import threading
+import time
 import unittest
 from types import SimpleNamespace
 from http.server import ThreadingHTTPServer
@@ -30,6 +31,11 @@ class SessionTests(unittest.TestCase):
                 aftermath=next(item for item in public['incidents'] if item.get('display_name'))
                 self.assertEqual(aftermath['display_name'],'Tank TK-01 damage aftermath')
 
+    def test_incident_catalogue_marks_manual_only_without_schedule_or_position(self):
+        incidents=configuration({'scenario':'forest','case':'F'})['incidents']
+        self.assertEqual({i['id']:i['manual_only'] for i in incidents},{'hazard_tree':False,'hazard_tree_b':True,'hazard_fire_smoke_c':True,'hazard_fire_smoke_d':True})
+        self.assertFalse(any(key in item for item in incidents for key in ('at','position','radius')))
+
     def test_reset_uses_full_process_command_and_reports_failures(self):
         calls=[]
         with tempfile.TemporaryDirectory() as folder:
@@ -39,6 +45,40 @@ class SessionTests(unittest.TestCase):
             self.assertEqual(calls[0][-1],'reset');self.assertTrue(session.state['paused']);self.assertFalse(session.busy)
             session.runner=lambda *a,**kw:SimpleNamespace(returncode=1,stdout='',stderr='Docker unavailable')
             session.execute({'command':'resume'});self.assertEqual(session.error,'Docker unavailable')
+
+    def test_view_toggle_only_freezes_the_gui_client(self):
+        with self.assertRaises(ValueError):validate_command({'command':'view'})
+        self.assertEqual(validate_command({'command':'view','enabled':False})['enabled'],False)
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'results').mkdir()
+            (root/'results/scenario-session.json').write_text(json.dumps({'scenario':'forest','case':'F','paused':False}))
+            calls=[]
+            session=Session(root,lambda args,**kwargs:calls.append(args) or SimpleNamespace(returncode=0,stdout='',stderr=''))
+            session.execute({'command':'view','enabled':False})
+            self.assertEqual(calls[-1][-1],'view-pause')
+            self.assertFalse(session.state['paused'])
+            session.execute({'command':'view','enabled':True})
+            self.assertEqual(calls[-1][-1],'view-resume')
+
+    def test_resume_queues_behind_a_quick_view_toggle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'results').mkdir()
+            (root/'results/scenario-session.json').write_text(json.dumps({'scenario':'forest','case':'F','paused':True}))
+            calls=[];release=threading.Event()
+            def runner(args,**kwargs):
+                calls.append(args[-1])
+                if args[-1]=='view-pause':release.wait(2)
+                return SimpleNamespace(returncode=0,stdout='',stderr='')
+            session=Session(root,runner)
+            session.submit({'command':'view','enabled':False})
+            threading.Timer(.3,release.set).start()
+            session.submit({'command':'resume'})  # would have been rejected while the view toggle ran
+            for _ in range(100):
+                if not session.busy:break
+                time.sleep(.02)
+            self.assertEqual(calls,['view-pause','resume']);self.assertFalse(session.state['paused'])
+            session.busy=True;session.operation='switch'
+            with self.assertRaises(RuntimeError):session.submit({'command':'resume'},wait=.2)
 
     def test_active_experiment_rejects_destructive_session_switch(self):
         with tempfile.TemporaryDirectory() as folder:

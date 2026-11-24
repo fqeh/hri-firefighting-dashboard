@@ -4,6 +4,18 @@
 
 `human_behavior` → public intent/odometry → `bayesian_tom` → `warning_decision` implements the live belief-aware loop. `rescue_routing` supplies risk-weighted alternatives; `oracle_warning` is the separately privileged comparator. Engines are `expected_loss`, `value_iteration`, and frozen `q_learning`, with fallback to expected loss. Configuration files live in `config/`. See [full policy and interface documentation](../../../docs/WARNING_POLICY.md) and [verified results](../../../docs/PHASE4_VALIDATION.md). The following two-state description is retained for the explicitly selected legacy baseline.
 
+### Presentation-build additions
+
+| Change | Where |
+| --- | --- |
+| Decisions also publish the break-even threshold (`threshold`) and what B1–B4 would do at the same moment (`baselines`) | `warning_model.warning_threshold`, `baseline_actions` |
+| Route states from semantic names; `hazard_fire_smoke*` blocks a trail | `tom.hazard_route_state` |
+| Smoke occluder: hazards and route samples under an observed `hazard_smoke` are not observed; clouds published as `occluders` | `tom.semantic_occluder`, `tom.occluded`, `tom_runtime.PublicPerception` |
+| Per-scenario hazardous-trail cost: config `hazard_multiplier` for the crew, `assumed_hazard_multiplier` for inference (forest: 8; default 4 unchanged) | `tom.edge_cost`, `runtime.HumanBehavior`, `tom_runtime.BayesianToM` |
+| `/hri/escalation` and `send_operator` when no escape route remains | `route_risk.escape_route_exists`, `rescue_runtime.RescueRouting` |
+| UAV observation goals become visits (`uav.observe_dwell_s`) | `forest_runtime.ScriptedUAV` |
+| Optional spawn `yaw`; `incident_already_present` event on repeated injection; the crew honours a configured hazard `state` | `runtime.py` |
+
 This package separates communication/behavior algorithms from Gazebo physics.
 `core.py` imports only Python's standard library. `runtime.py` provides four
 separate ROS processes, all launched with `use_sim_time=true`.

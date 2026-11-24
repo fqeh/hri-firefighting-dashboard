@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0,str(root/'ros2_ws/src/hri_industrial'))
 from hri_industrial.incident_config import add_tank_damage_hazard,load_tank_damage_incident
 p=argparse.ArgumentParser(description=__doc__)
-p.add_argument('action',choices=['start','pause','resume','reset','replay','stop','status'])
+p.add_argument('action',choices=['start','pause','resume','reset','replay','stop','status','view-pause','view-resume'])
 p.add_argument('--scenario',choices=['forest','oil_facility'])
 p.add_argument('--case',help='Forest A–F; oil normal/blockage/fire/gas/combined/known/unaware/no_safe')
 p.add_argument('--seed',type=int);p.add_argument('--policy',choices=['B1','B2','B3','B4','oracle'])
@@ -36,7 +36,7 @@ if a.action in ('start','reset','replay'):
         value=getattr(a,field)
         state[key]=value if value is not None else state.get(key,default)
     output=f'results/{scenario}_runs/{time.time_ns()}_{case}';(root/output).mkdir(parents=True)
-    state.update(output=output,paused_at_start=not a.play,paused=not a.play)
+    state.update(output=output,paused_at_start=not a.play,paused=not a.play,view_paused=False)
     env=dict(os.environ,HRI_GUI_SCENARIO=scenario,HRI_GUI_MISSION='false',HRI_GUI_DASHBOARD='true',
         HRI_GUI_START_PAUSED=str(not a.play).lower(),HRI_GUI_OUTPUT='/work/'+output,HRI_SCENARIO_CONFIG='',
         HRI_FOREST_CASE=case if scenario=='forest' else '',HRI_OIL_CASE=case if scenario=='oil_facility' else 'blockage',
@@ -68,6 +68,12 @@ elif a.action in ('pause','resume'):
         '--reqtype','gz.msgs.WorldControl','--reptype','gz.msgs.Boolean','--timeout','5000','--req',
         'pause: '+str(a.action=='pause').lower()],cwd=root,check=True)
     state['paused']=a.action=='pause'
+    statefile.write_text(json.dumps(state,indent=2)+'\n')
+elif a.action in ('view-pause','view-resume'):
+    # Freeze or resume only the Gazebo GUI client (software-rendered 3D view);
+    # the physics server, sensors and ROS nodes keep running unchanged.
+    subprocess.run(base+['exec','-T','gui','pkill','-STOP' if a.action=='view-pause' else '-CONT','-f','gz sim -g'],cwd=root,check=True)
+    state['view_paused']=a.action=='view-pause'
     statefile.write_text(json.dumps(state,indent=2)+'\n')
 elif a.action=='stop':subprocess.run(base+['stop','gui'],cwd=root,check=True)
 else:

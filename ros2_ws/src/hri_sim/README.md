@@ -22,6 +22,13 @@ The forest contains 21 colliding trees, an authored triangulated 3D hill mesh wi
 
 Gazebo logical cameras report objects inside their frustum and expose model identities and poses. They are an idealized semantic observation sensor, **not** RGB fire recognition, line-of-sight ray tracing, or an occlusion-aware perception pipeline. The belief node must consume only these sensor detections and observable actions, never the hidden human belief or scenario manager's incident truth. Ground-truth pose topics must be named and used accordingly in research claims.
 
+### Presentation-build changes
+
+- **Forest map.** Four escape routes: new nodes `trail_c`, `c_end`, `trail_d`, `d_end` and edges `trail_c`, `trail_c_east`, `exit_c`, `trail_d`, `trail_d_east`, `exit_d`. Trees, a shrub and the southern hill were moved off the corridors. Only the forest uses the extended graph (`FOREST_NODES` / `FOREST_EDGES`); the minimal and industrial worlds are unchanged.
+- **`hazard_smoke`.** Visual-only cloud, treated by perception as an occluder.
+- **`hazard_fire_smoke`.** Fire with its smoke column drifting downwind; a blocking incident.
+- Forest cases are UAV-only (`ground_robot: false`, restored by `forest_ground_robot:=true`). They are regenerated with `python3 scripts/create_forest_scenarios.py` after `generate_assets.py`.
+
 ## Reproduction and validation
 
 Regenerate assets deterministically with:

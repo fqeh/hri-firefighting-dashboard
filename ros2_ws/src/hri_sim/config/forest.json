@@ -26,6 +26,22 @@
     "safety": [
       16,
       6
+    ],
+    "trail_c": [
+      4,
+      -8
+    ],
+    "c_end": [
+      18,
+      -8
+    ],
+    "trail_d": [
+      -1,
+      8.5
+    ],
+    "d_end": [
+      16,
+      8.5
     ]
   },
   "edges": [
@@ -69,6 +85,48 @@
       "source": "merge",
       "target": "safety",
       "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_c",
+      "source": "fork",
+      "target": "trail_c",
+      "length": 6.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_c_east",
+      "source": "trail_c",
+      "target": "c_end",
+      "length": 14.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "exit_c",
+      "source": "c_end",
+      "target": "safety",
+      "length": 14.142135623730951,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_d",
+      "source": "start",
+      "target": "trail_d",
+      "length": 10.547511554864494,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "trail_d_east",
+      "source": "trail_d",
+      "target": "d_end",
+      "length": 17.0,
+      "initial_state": "unknown"
+    },
+    {
+      "id": "exit_d",
+      "source": "d_end",
+      "target": "safety",
+      "length": 2.5,
       "initial_state": "unknown"
     }
   ],

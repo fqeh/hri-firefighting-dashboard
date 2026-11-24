@@ -4,6 +4,21 @@ from .forest_model import plan_route,edge_exposure
 from .core import RouteGraph
 
 
+def escape_route_exists(map_config,start,blocked_edges):
+    """Is the goal reachable from `start` without using any blocked edge?"""
+    adjacency={n:[] for n in map_config['nodes']}
+    for e in map_config['edges']:
+        if e['id'] in blocked_edges:continue
+        adjacency[e['source']].append(e['target']);adjacency[e['target']].append(e['source'])
+    seen,frontier={start},[start]
+    while frontier:
+        node=frontier.pop()
+        if node==map_config['goal']:return True
+        for nxt in adjacency[node]:
+            if nxt not in seen:seen.add(nxt);frontier.append(nxt)
+    return False
+
+
 def recommend(map_config,position,hazards,clear_edges,config,entity='crew'):
     graph=RouteGraph(map_config)
     observed={edge:'clear' for edge in clear_edges if edge in graph.edges}

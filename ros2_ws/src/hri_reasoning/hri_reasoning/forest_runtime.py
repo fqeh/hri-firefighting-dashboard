@@ -40,7 +40,8 @@ class ForestManager(ScenarioManager):
     def inject(self,hazard):
         already=hazard['id'] in self.spawned
         super().inject(hazard)
-        if not already and self.config.get('manual_incidents') and hazard['kind']=='fire':
+        # Manually triggered fires (manual mode or manual-only demo incidents) start spreading now.
+        if not already and (self.config.get('manual_incidents') or hazard.get('manual_only')) and hazard['kind']=='fire':
             for origin in self.fire.config.get('origins',[]):
                 if origin['id']==hazard['id']:origin['at']=self.stamp()
 
@@ -130,8 +131,16 @@ class ScriptedUAV(ResearchNode):
         self.service=ScenarioManager.service.__get__(self)
         self.position=None
         self.pose_stamp=None
-        self.goals=list(self.config['uav']['waypoints'])
+        self.patrol=list(self.config['uav']['waypoints'])
+        self.goals=self.patrol
         self.index=0
+        # Observation goals (lookout OBSERVE action or an operator waypoint) are visits:
+        # hover for observe_dwell_s, then resume the patrol. Unset keeps the original
+        # behaviour of staying at the goal.
+        dwell=self.config['uav'].get('observe_dwell_s')
+        self.dwell=None if dwell is None else float(dwell)
+        self.resume_index=0
+        self.observing_since=None
         self.last_time=None
         self.path=RosPath();self.path.header.frame_id='world'
         self.path_pub=self.create_publisher(RosPath,'/uav/trajectory',10)
@@ -157,8 +166,10 @@ class ScriptedUAV(ResearchNode):
         if msg.header.frame_id!='world' or not all(math.isfinite(v) for v in point) or not(-5<=p.x<=20 and -6<=p.y<=12 and 6<=p.z<=12):
             self.publish_json('/hri/events',{'source':'uav','event':'waypoint_rejected','reason':'requires world frame, x[-5,20], y[-6,12], z[6,12]'})
             return
-        self.goals=[point];self.index=0
-        self.publish_json('/hri/events',{'source':'uav','event':'waypoint_accepted','position':point})
+        if self.goals is self.patrol:self.resume_index=self.index
+        self.goals=[point];self.index=0;self.observing_since=None
+        self.publish_json('/hri/events',{'source':'uav','event':'waypoint_accepted','position':point,
+                          'dwell_s':self.dwell})
 
     def tick(self):
         now=self.stamp()
@@ -179,6 +190,11 @@ class ScriptedUAV(ResearchNode):
                 self.service('set_pose','gz.msgs.Pose',pose_request('uav',point))
             elif len(self.goals)>1:
                 self.index=(self.index+1)%len(self.goals) if self.config['uav'].get('loop',True) else min(self.index+1,len(self.goals)-1)
+            elif self.goals is not self.patrol and self.dwell is not None:
+                if self.observing_since is None:self.observing_since=now
+                elif now-self.observing_since>=self.dwell:
+                    self.goals=self.patrol;self.index=self.resume_index;self.observing_since=None
+                    self.publish_json('/hri/events',{'source':'uav','event':'patrol_resumed','after_s':self.dwell})
             width=2*(self.position[2]-.15)*math.tan(self.config['uav']['camera_hfov']/2)
             if self.created_footprint and abs(width/2-self.footprint_radius)>.25:
                 self.service('remove','gz.msgs.Entity','name: \"uav_footprint\" type: MODEL')

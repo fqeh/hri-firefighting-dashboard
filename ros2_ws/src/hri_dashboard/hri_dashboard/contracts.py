@@ -17,7 +17,7 @@ def provenance(topic: str) -> Source:
         return 'configuration'
     if topic in ('/forest/fire_state', '/human/odom', '/uav/odom'):
         return 'simulation_truth'
-    if topic in ('/hri/belief', '/hri/decision', '/hri/routes', '/hri/rescue_route', '/hri/robot_route', '/hri/warning'):
+    if topic in ('/hri/belief', '/hri/decision', '/hri/routes', '/hri/rescue_route', '/hri/robot_route', '/hri/warning', '/hri/escalation'):
         return 'inference'
     if topic.startswith('/dashboard/') or topic in ('/hri/status','/hri/events','/hri/navigation','/hri/operator_receipt','/hri/acknowledgement'):
         return 'control'

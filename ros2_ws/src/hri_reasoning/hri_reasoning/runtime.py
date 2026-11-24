@@ -88,13 +88,17 @@ class ScenarioManager(ResearchNode):
 
     def inject(self, hazard):
         if hazard['id'] in self.spawned:
+            self.publish_json('/hri/events',{'source':'scenario','event':'incident_already_present',
+                              'id':hazard['id'],'detail':'Each incident exists once per run; it is already in the simulation.'})
             return
         x,y,z = hazard['position']
         model = self.model_root/hazard.get('model',hazard['id'])/'model.sdf'
         if not model.is_file():
             raise RuntimeError(f'Missing physical hazard SDF: {model}')
+        yaw = float(hazard.get('yaw', 0.))  # e.g. a fallen tree lying across its trail
         request = (f'sdf_filename: {json.dumps(str(model))} name: {json.dumps(hazard["id"])} '
-                   + 'pose: {position: {x: %s y: %s z: %s}} allow_renaming: false' % (x,y,z))
+                   + 'pose: {position: {x: %s y: %s z: %s} orientation: {z: %s w: %s}} allow_renaming: false'
+                   % (x,y,z,math.sin(yaw/2),math.cos(yaw/2)))
         self.service('create','gz.msgs.EntityFactory',request)
         self.spawned.add(hazard['id'])
         self.publish_json('/evaluation/truth',{'event':'hazard_created','hazard':hazard})
@@ -103,7 +107,7 @@ class ScenarioManager(ResearchNode):
 
     def control(self, data):
         command = data['command']
-        if command in ('waypoint', 'cancel_waypoint', 'acknowledge_warning','approve_route','uav_waypoint','dismiss_warning'):
+        if command in ('waypoint', 'cancel_waypoint', 'acknowledge_warning','approve_route','uav_waypoint','dismiss_warning','send_operator'):
             return  # Navigation adapter owns operator waypoint commands.
         try:
             if command in ('pause','resume'):
@@ -199,6 +203,8 @@ class HumanBehavior(ResearchNode):
     def hazard_state(self, hazard):
         if not self.tom:
             return 'blocked'
+        if hazard.get('state') in ('blocked','open_hazardous'):
+            return hazard['state']  # e.g. a fire with dense smoke closes the trail
         return 'open_hazardous' if hazard.get('kind') in ('fire','gas') else 'blocked'
 
     def glance(self):
@@ -224,7 +230,8 @@ class HumanBehavior(ResearchNode):
             name = model.name.split('::')[0]
             hazard = self.hazards.get(name)
             p = model.pose.position
-            if hazard and math.sqrt(p.x*p.x+p.y*p.y+p.z*p.z) <= self.radius:
+            # Smoke is an occluder for the robot's cameras, not a route state the crew learns.
+            if hazard and hazard.get('kind') != 'smoke' and math.sqrt(p.x*p.x+p.y*p.y+p.z*p.z) <= self.radius:
                 state = self.hazard_state(hazard)
                 if self.knowledge[hazard['edge']]=='blocked' and state!='blocked':continue
                 if self.knowledge[hazard['edge']] != state:
@@ -268,7 +275,8 @@ class HumanBehavior(ResearchNode):
     def decide(self):
         if self.stamp() < self.wait_until:
             return
-        dist = (action_distribution(self.graph,self.current,self.goal,self.knowledge,self.beta,self.lapse)
+        costs = {'hazard_multiplier': float(self.config.get('hazard_multiplier', 4.))}
+        dist = (action_distribution(self.graph,self.current,self.goal,self.knowledge,self.beta,self.lapse,**costs)
                 if self.tom else self.graph.action_distribution(self.current,self.goal,self.knowledge,self.beta))
         self.target = sample_action(dist,self.route_rng)
         self.decision_id += 1
@@ -279,7 +287,7 @@ class HumanBehavior(ResearchNode):
             return
         if self.target:
             if self.tom:
-                remainder,_ = route(self.graph,self.target,self.goal,self.knowledge,excluded=(self.current,))
+                remainder,_ = route(self.graph,self.target,self.goal,self.knowledge,excluded=(self.current,),**costs)
                 self.path = [self.current]+(remainder or [self.target])
             else:
                 remainder = self.graph.shortest(self.target,self.goal,self.knowledge,unknown_penalty=1)
@@ -373,7 +381,7 @@ class BeliefWarning(ResearchNode):
         detected = []
         for model in msg.model:
             name = model.name.split('::')[0]
-            if name not in self.hazards:
+            if name not in self.hazards or self.hazards[name].get('kind') == 'smoke':
                 continue
             catalog_entry = self.hazards[name]
             # Semantic edge annotation is part of the prior map. Position is
