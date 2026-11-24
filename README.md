@@ -12,6 +12,18 @@ Gazebo owns every physical entity and all motion. Python implements behavior, in
 
 **Phase 7 evaluation and handoff:** [validation status](docs/PHASE7_VALIDATION.md), [final measured results and candid research status](RESULTS.md), [research report](docs/FINAL_RESEARCH_REPORT.md), [reproduction checklist](docs/REPRODUCIBILITY_CHECKLIST.md), and [demonstration script](docs/DEMO_SCRIPT.md). The prototype and evaluation pipeline pass engineering acceptance; the powered research study remains incomplete.
 
+**Presentation demo build:** a single-screen dashboard with a browser-rendered 3D world, GIS-style layers and a pipeline view (Observe → Infer → Decide → Warn). The forest now has four escape routes, UAV-only observation, demo incidents and escalation to the human operator when every route is blocked. See [the demo dashboard guide](docs/DEMO_DASHBOARD.md), [forest changes](docs/FOREST_SCENARIO.md#presentation-build-four-escape-routes-demo-incidents-and-escalation) and the [presentation script](docs/DEMO_SCRIPT.md).
+
+## Presentation demo
+
+```sh
+bash scripts/run_dashboard.sh                 # supervisor + dashboard on http://127.0.0.1:5173
+# Scenario → "Crew unaware" (fills the form) → Load scenario & policy → ▶ Resume
+setsid nohup bash scripts/run_public.sh > results/public-host.log 2>&1 &   # optional: share via a public URL (no auth!)
+```
+
+Optional host tuning in `.env`: `HRI_GUI_SIZE=960x600` (smaller software-rendered Gazebo window) and `HRI_CPU_SHARES=8192` (CPU priority for the simulation on a shared host).
+
 ## Phase 5 industrial emergency
 
 The fictional oil facility uses the same Bayesian HMM and warning policies with operator-command evidence, a physical differential-drive robot, Nav2, LiDAR and camera. Destination selection requests a recommendation; explicit approval authorizes motion. Debris, fire and gas observations cause risk-based replanning, and unavailable routes are refused.
@@ -38,7 +50,7 @@ python3 scripts/forestctl.py resume
 python3 scripts/forestctl.py replay
 ```
 
-Open [the native Gazebo viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale) and [the dashboard](http://127.0.0.1:5173). The crew moves physically, the UAV observes, and the dashboard shows the posterior, warning loss, acknowledgement and risk-weighted alternative. In this forest demonstration the ground robot is a stationary sensor platform; enable Nav2 and approve a route to move it independently.
+Open [the native Gazebo viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale) and [the dashboard](http://127.0.0.1:5173). The crew moves physically, the UAV observes, and the dashboard shows the posterior, warning loss, acknowledgement and risk-weighted alternative. Forest cases are now UAV-only (the stationary ground robot was removed; launch with `forest_ground_robot:=true` to restore it, as the Phase 2 acceptance test does).
 
 ```bash
 # Same physical incident, five policies, known/unaware crew knowledge
@@ -220,6 +232,7 @@ Check `--help` for configurable policies, seeds, observation radius, trust and t
 - [Simulation assets](ros2_ws/src/hri_sim/README.md): worlds, sensor/robot approximations and regeneration.
 - [HRI reasoning](ros2_ws/src/hri_reasoning/README.md): hypotheses, warning costs, messages and baselines.
 - [Dashboard](dashboard/README.md): telemetry API and local development.
+- [Demo dashboard guide](docs/DEMO_DASHBOARD.md): single-screen layout, 3D layers, escalation, remote sharing.
 - [Dependencies](docs/DEPENDENCIES.md): platform compatibility, sources and licenses.
 - [Research report](docs/RESEARCH_REPORT.md): hypotheses, interpretation and limitations.
 - [Measured outcomes](results/report/RESULTS.md): actual baseline results, including the null B4 benefit in this matrix.

@@ -35,6 +35,8 @@ npm run build
 python3 -m unittest discover -s ros2_ws/src/hri_dashboard/test -v
 ```
 
+The presentation UI (single screen, browser-rendered 3D world, layers, operator escalation) is documented in [docs/DEMO_DASHBOARD.md](../docs/DEMO_DASHBOARD.md).
+
 ## Telemetry contract
 
 | Endpoint | Content |
@@ -44,6 +46,9 @@ python3 -m unittest discover -s ros2_ws/src/hri_dashboard/test -v
 | `GET /api/events` | Server-sent events carrying the same state at 2 Hz |
 | `GET /api/camera.png` | Latest genuine ROS image encoded as PNG; HTTP 503 if missing or stale |
 | `POST /api/control` | Validated JSON command queued for `/hri/control`; HTTP 202 does not claim execution |
+| `GET /api/session/scene` | (session supervisor) Static world geometry of the active scenario for the web 3D view: SDF primitives with composed poses, entity models and spawn poses, logical-camera parameters, hazard templates. No incident truth. |
+
+If `/api/events` opens but delivers nothing (as through a Cloudflare quick tunnel), the UI polls `/api/state` every 0.5 s instead. `send_operator` (no fields) records that the human operator dispatched a rescue after `/hri/escalation` reported no escape route.
 
 Commands are `pause`, `resume`, `inject` (optional `hazard_id`), `waypoint` (required finite numeric `x`, `y` between -100 and 100 metres), `cancel_waypoint`, and `acknowledge_warning` (required nonempty `hazard_id`, at most 128 characters). Waypoints require the Nav2 launch option. A resume command remains possible after a previously observed simulation pauses its clock. Scenario events and `/hri/navigation` provide execution results. A reproducible reset requires restarting the complete simulation with the desired seed.
 
@@ -63,7 +68,7 @@ The image encoder supports `rgb8`, `bgr8`, `rgba8`, `bgra8`, and `mono8`, respec
 
 ## Dependencies and validation
 
-Runtime frontend dependencies are MIT-licensed React and React DOM; development tools are TypeScript (Apache-2.0) and Vite (MIT). Versions are pinned in `package.json` and the exact dependency tree in `package-lock.json`. See [React documentation](https://react.dev/) and [Vite's installation requirements](https://vite.dev/guide/). The backend uses Python's standard library and ROS 2 packages supplied by the project environment. No paid APIs are required.
+Runtime frontend dependencies are MIT-licensed React, React DOM and three.js; development tools are TypeScript (Apache-2.0) and Vite (MIT). Versions are pinned in `package.json` and the exact dependency tree in `package-lock.json`. See [React documentation](https://react.dev/) and [Vite's installation requirements](https://vite.dev/guide/). The backend uses Python's standard library and ROS 2 packages supplied by the project environment. No paid APIs are required.
 
 Unit tests cover real HTTP command validation, absent and stale telemetry, camera expiration, channel conversion, and padded image rows. Those tests are independent of integrated Gazebo/ROS validation; see the root validation record for actual runtime evidence.
 

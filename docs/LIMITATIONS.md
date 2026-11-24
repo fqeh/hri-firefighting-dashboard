@@ -1,5 +1,15 @@
 # Limitations and requirement status
 
+## Presentation demo build
+
+- **Rendering.** The web 3D view renders Gazebo's SDF geometry and live telemetry. It is a visualization, not a second simulator. Hazards appear only once observed. Agent poses are interpolated between telemetry updates.
+- **Smoke.** Occlusion is a radius test around observed clouds, not ray-traced visibility. Smoke does not reduce the crew's own sight.
+- **Fire with smoke.** `hazard_fire_smoke` is a static blocking incident; it does not spread. Fire-model fronts still use the original passable-with-exposure semantics.
+- **Escalation.** Send operator only records the dispatch: no rescue team, extraction or crew response is simulated. Escalation uses the planner's observed edge states, so a blockage nobody has seen cannot trigger it.
+- **Comparability.** The new map (four routes), UAV-only observation, UAV start and visit behaviour, and the forest's 8× hazardous-trail cost change the forest scenarios. Earlier measured results were produced before these changes and were not re-run.
+- **Sharing.** The Cloudflare quick tunnel used by `scripts/run_public.sh` has no authentication and no uptime guarantee, and it does not carry server-sent events (the UI polls instead).
+- **CPU.** On hosts without a GPU, Gazebo's own window is software-rendered. The dashboard pauses it while the web view is open; the `HRI_CPU_SHARES` weight helps only when the host is contended.
+
 ## Current Phase 4 status
 
 The newer [Phase 4 validation](PHASE4_VALIDATION.md) supersedes implementation limitations below about the two-state inference, static forest UAV and offline-only warning engines. Four-state per-trail inference, cost-sensitive OBSERVE, live expected-loss/VI/frozen-Q engines, risk routing and Nav2 approval/replacement are implemented and demonstrated. The paired comparison separates informed and unaware crews while holding robot hazard observations fixed. Q-learning convergence, the occasional installed-bridge shutdown assertion, larger multi-seed evaluation and validated human/fire/flight models remain limitations. No human-subject efficacy claim is made.
