@@ -44,6 +44,27 @@ def canonical(state):
     return value
 
 
+# Dense smoke hides whatever lies beneath it from overhead and ground cameras. It is an
+# occluder of observations, not a hazard with a route state (no severity, no warning).
+SMOKE_RADIUS = 3.5
+
+
+def semantic_occluder(name):
+    return 'smoke' if name == 'hazard_smoke' or name.startswith('hazard_smoke_') else None
+
+
+def occluded(point, occluders, radius=SMOKE_RADIUS):
+    return any(math.hypot(point[0]-o[0], point[1]-o[1]) < radius for o in occluders)
+
+
+def hazard_route_state(name, kind):
+    """Trees, debris and fully developed fires with dense smoke close a trail;
+    other fire patches and gas leave it passable at an exposure cost."""
+    if kind in ('tree','debris') or name.startswith('hazard_fire_smoke'):
+        return 'blocked'
+    return 'open_hazardous' if kind in ('fire','gas') else 'blocked'
+
+
 def semantic_hazard_kind(name):
     return next((kind for kind in ('tree', 'fire', 'gas', 'debris')
                  if name == f'hazard_{kind}' or name.startswith(f'hazard_{kind}_')), None)
@@ -72,6 +93,8 @@ def validate_public_map(config):
     return RouteGraph(config)
 
 
+# Scenarios may raise hazard_multiplier: the forest uses 8 so a crew takes a long safe
+# detour rather than walk through a fire front (see config 'hazard_multiplier').
 def edge_cost(edge, knowledge, hazard_multiplier=4., unknown_multiplier=1.6):
     state = canonical(knowledge.get(edge.id, 'open_safe'))
     return edge.length * {'open_safe': 1., 'blocked': math.inf,

@@ -19,7 +19,7 @@ JSON_TOPICS = (
     "/hri/decision", "/hri/rescue_route", "/hri/robot_route", "/hri/acknowledgement",
     "/hri/facility", "/hri/operator_actions", "/hri/operator_intent",
     "/hri/tom_evidence", "/hri/route_observations", "/hri/operator_receipt",
-    "/hri/equipment_registry",
+    "/hri/equipment_registry", "/hri/escalation",
 )
 
 
@@ -137,7 +137,7 @@ def make_handler(store, commands, emergency_commands=None, uav_store=None):
                 if not 0 < size <= 4096:
                     raise ValueError("Invalid request size")
                 data = json.loads(self.rfile.read(size))
-                if not isinstance(data, dict) or data.get("command") not in ("pause", "resume", "inject", "waypoint", "cancel_waypoint", "acknowledge_warning", "emergency_stop","approve_route","select_destination","uav_waypoint","dismiss_warning"):
+                if not isinstance(data, dict) or data.get("command") not in ("pause", "resume", "inject", "waypoint", "cancel_waypoint", "acknowledge_warning", "emergency_stop","approve_route","select_destination","uav_waypoint","dismiss_warning","send_operator"):
                     raise ValueError("Unknown command")
                 allowed = ({"waypoint": ("command", "x", "y"),
                             "uav_waypoint": ("command", "x", "y", "z"),

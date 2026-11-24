@@ -44,7 +44,11 @@ try:
  displacement={n:max(math.dist(v[0][1:],row[1:]) for row in v) for n,v in poses.items()}
  assert all(d>1 for d in displacement.values()),displacement
  assert node.counts['uav_image']>10 and len(set(node.latest['uav_image'].data))>8
- assert math.dist(position(node.latest['uav']),[6,0,8])<.35,'UAV did not reach commanded observation goal'
+ # The UAV now visits an observation goal and then resumes its patrol (observe_dwell_s),
+ # so check that it reached the goal after the command rather than where it ends up.
+ after=[row for row in poses['uav'] if row[0]>=21]
+ closest=min(after,key=lambda row:math.dist(row[1:],[6,0,8])) if after else None
+ assert closest and math.dist(closest[1:],[6,0,8])<.35,'UAV did not reach commanded observation goal'
  routes=hist.get('/forest/routes',[]);assert routes,'no route telemetry'
  sequence=[r['hazard'] for r in hist.get('/evaluation/truth',[]) if r.get('event')=='hazard_created']
  if args.case=='D':
@@ -61,7 +65,7 @@ try:
   report['collision']={'fixture':'robot placed at (5,-2) before forward command; tree was dynamically created', 'final_physical_pose':samples[-1],'fresh_contact_samples':len(samples)}
  else:
   assert not sequence and all(not r['zones'] for r in hist['/forest/fire_state']),'normal scenario contains hazards'
- report.update(status='passed',max_displacement_m=displacement,uav_goal_reached=position(node.latest['uav']),
+ report.update(status='passed',max_displacement_m=displacement,uav_goal_reached=closest[1:],
   configured_event_sequence=[{'id':h['id'],'at':h['at']} for h in sequence],
   observed_event_times=[{'id':r['hazard']['id'],'stamp':r['stamp']} for r in hist.get('/evaluation/truth',[]) if r.get('event')=='hazard_created'],
   route_before=routes[0],route_after=next((r for r in routes if r['edge_states']['trail_a']=='blocked'),routes[-1]),

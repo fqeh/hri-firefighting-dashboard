@@ -1,6 +1,7 @@
 import copy,json,math
 from pathlib import Path
 from hri_reasoning.forest_model import FireModel,fuel_at,inside_zone,plan_route,incident_sequence
+from hri_reasoning.tom import semantic_occluder,semantic_hazard_kind,occluded,SMOKE_RADIUS
 
 ROOT=Path(__file__).resolve().parents[2]/'hri_sim/config/forest_scenarios'
 def config(case='D'):return json.loads((ROOT/f'{case}.json').read_text())
@@ -38,7 +39,8 @@ def test_blockage_and_alternative():
 def test_unknown_no_route_and_exposure_cost():
  c=config();unknown=plan_route(c,[0,-2],{},[])
  assert not unknown['verified'] and unknown['safety']=='conditional'
- none=plan_route(c,[0,-2],{'approach':'blocked'},[])
+ assert plan_route(c,[0,-2],{'approach':'blocked'},[])['recommended'][:2]==['start','trail_d']  # north route from the start
+ none=plan_route(c,[0,-2],{'approach':'blocked','trail_d':'blocked'},[])
  assert none['recommended']==[] and none['safety']=='unavailable'
  clear={e['id']:'clear' for e in c['edges']}
  risk=plan_route(c,[0,-2],clear,FireModel(c['fire'],7).state(25))
@@ -55,3 +57,41 @@ def test_scenarios_and_knowledge_pair():
   c=config(case)
   for h in c['hazards']:
    assert h['edge'] in {x['id'] for x in c['edges']}
+
+def test_demo_incidents_can_close_all_four_escape_routes_without_changing_the_scheduled_run():
+ for case in 'EF':
+  c=config(case)
+  assert [(h['id'],h['at']) for h in c['hazards'] if not h.get('manual_only')]==[('hazard_tree',8.0)]
+  manual={h['id']:h for h in c['hazards'] if h.get('manual_only')}
+  assert {h['edge'] for h in manual.values()}=={'trail_b','trail_c','trail_d'}
+  assert manual['hazard_tree_b']['yaw']==1.5707963  # lies across Trail B
+  assert all(manual[k]['state']=='blocked' and manual[k]['model']=='hazard_fire_smoke' for k in ('hazard_fire_smoke_c','hazard_fire_smoke_d'))
+  assert c['fire']['origins']==[]
+
+def test_smoke_occludes_observations_but_is_not_a_hazard():
+ assert semantic_occluder('hazard_smoke')=='smoke' and semantic_hazard_kind('hazard_smoke') is None
+ assert semantic_occluder('hazard_tree') is None and semantic_hazard_kind('hazard_tree')=='tree'
+ cloud=[[7,-2,0]]
+ assert occluded((7,-2),cloud) and occluded((9.5,-2),cloud) and not occluded((10.6,-2),cloud)
+
+def test_four_escape_routes_and_the_operator_escalation_condition():
+ from hri_reasoning.core import RouteGraph
+ from hri_reasoning.tom import route,hazard_route_state
+ from hri_reasoning.route_risk import recommend,escape_route_exists
+ c=config('F');public={k:c[k] for k in ('nodes','edges','start','goal')};g=RouteGraph(public)
+ path_edges=lambda path:{e for a,b in zip(path,path[1:]) for n,e in g.adjacency[a] if n==b}
+ # A blocked and the bypass on fire: the crew turns back for a long route instead of crossing
+ assert c['hazard_multiplier']==8.0
+ path,_=route(g,'trail_b','safety',{'trail_a':'blocked','bypass':'open_hazardous'},hazard_multiplier=c['hazard_multiplier'])
+ assert path[-1]=='safety' and not {'trail_a','bypass'}&{e.id for e in path_edges(path)}
+ assert route(g,'fork','safety',{'trail_a':'blocked'})[0]==['fork','trail_b','merge','safety']  # unchanged when B is clear
+ settings=json.loads((Path(__file__).resolve().parents[1]/'config/warning_policy.json').read_text())['route']
+ tree={'id':'hazard_tree','kind':'tree','edge':'trail_a','position':[7,-2,.45],'radius':2,'state':'blocked'}
+ fires=[{'id':f'f{i}','kind':'fire','edge':'bypass','position':[5+i*.8,6,0],'radius':.6,'state':'open_hazardous'} for i in range(8)]
+ plan=recommend(public,[4,6],[tree]+fires,['approach','trail_b','bypass'],settings)
+ assert plan['recommended'][-1]=='safety' and 'merge' not in plan['recommended']
+ # escalation: only when every route is closed (A and B and C and D)
+ assert hazard_route_state('hazard_fire_smoke_c','fire')=='blocked' and hazard_route_state('hazard_fire_front_0_3','fire')=='open_hazardous'
+ assert escape_route_exists(public,'fork',{'trail_a','trail_b','trail_c'})  # D is still open
+ assert not escape_route_exists(public,'fork',{'trail_a','trail_b','trail_c','trail_d'})
+ assert escape_route_exists(public,'safety',{'trail_a','trail_b','trail_c','trail_d'})

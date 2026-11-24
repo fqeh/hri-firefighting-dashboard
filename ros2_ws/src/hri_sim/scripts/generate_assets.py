@@ -68,12 +68,20 @@ def model_asset(name,content):
 
 NODES={'start':[0,-2],'fork':[4,-2],'trail_a':[10,-2],'trail_b':[4,6],'merge':[10,6],'safety':[16,6]}
 EDGES=[('approach','start','fork'),('trail_a','fork','trail_a'),('exit_a','trail_a','safety'),('trail_b','fork','trail_b'),('bypass','trail_b','merge'),('exit_b','merge','safety')]
+# Forest only: four independent escape routes to the safety zone. A and B are short;
+# C runs along the upwind (south) side and D along the north ridge from the start.
+# The prevailing wind blows north, so C is the long but safest detour.
+FOREST_NODES={**NODES,'trail_c':[4,-8],'c_end':[18,-8],'trail_d':[-1,8.5],'d_end':[16,8.5]}
+FOREST_EDGES=EDGES+[('trail_c','fork','trail_c'),('trail_c_east','trail_c','c_end'),('exit_c','c_end','safety'),
+                    ('trail_d','start','trail_d'),('trail_d_east','trail_d','d_end'),('exit_d','d_end','safety')]
+def route_map(name):return (FOREST_NODES,FOREST_EDGES) if name=='forest' else (NODES,EDGES)
 
 def terrain_mesh():
     # Closed slopes as a genuine triangulated 3D collision mesh, surrounding flat trails.
     p=ROOT/'models'/'terrain'/'meshes'/'hills.obj'; p.parent.mkdir(parents=True,exist_ok=True)
     verts=[]; faces=[]
-    for cx,cy,rx,ry,height in [(-7,6,5,9,2.5),(13,-11,10,5,3.8),(9,15,12,5,2.5),(25,3,5,12,3.2)]:
+    # The southern hill sits below the Trail D corridor (y = -8).
+    for cx,cy,rx,ry,height in [(-7,6,5,9,2.5),(13,-15,10,4,3.8),(9,15,12,5,2.5),(25,3,5,12,3.2)]:
         base=len(verts)
         verts.extend([(cx-rx,cy-ry,-.05),(cx+rx,cy-ry,-.05),(cx+rx,cy+ry,-.05),(cx-rx,cy+ry,-.05),(cx,cy,height)])
         faces.extend([(base+1,base+2,base+5),(base+2,base+3,base+5),(base+3,base+4,base+5),(base+4,base+1,base+5),(base+1,base+4,base+3),(base+1,base+3,base+2)])
@@ -107,14 +115,16 @@ def world(name):
         s+=static_shape('side_wall','0 5 1 0 0 0',box('8 .3 2'),'.6 .65 .7 1')
         return s+'</world></sdf>'
     s+='<include><uri>model://human</uri><name>human</name><pose>0 -2 .02 0 0 0</pose></include><include><uri>model://uav</uri><name>uav</name><pose>6 0 8 0 0 0</pose></include>'
-    for edge,a,b in EDGES:
-        x1,y1=NODES[a]; x2,y2=NODES[b]; length=math.hypot(x2-x1,y2-y1); yaw=math.atan2(y2-y1,x2-x1)
+    nodes,edges=route_map(name)
+    for edge,a,b in edges:
+        x1,y1=nodes[a]; x2,y2=nodes[b]; length=math.hypot(x2-x1,y2-y1); yaw=math.atan2(y2-y1,x2-x1)
         s+=static_shape('route_'+edge,f'{(x1+x2)/2} {(y1+y2)/2} .006 0 0 {yaw}',box(f'{length} 2.2 .01'),'.52 .44 .31 1' if name=='forest' else '.24 .26 .28 1',solid=False)
     s+=static_shape('safety_zone','16 6 .018 0 0 0',box('3 3 .02'),'.15 .62 .4 1',solid=False)
     s+=static_shape('safety_marker','17.5 7.5 1 0 0 0',box('.15 .15 2'),'.1 .8 .35 1')
     if name=='forest':
         s+='<include><uri>model://terrain</uri></include>'
-        trees=[(-3,-4),(-3,0),(-2,4),(0,5),(1,9),(5,10),(8,10),(12,10),(16,10),(19,8),(19,4),(17,0),(12,-5),(8,-5),(4,-5),(0,-5),(7,1),(7,3),(1,2),(12,2),(21,-3)]
+        # Moved off the Trail C/D corridors: (2,-6), (14.2,-3.5), (-2.6,4), (1.8,4.5), (-0.5,11.2), (1.6,2.2).
+        trees=[(-3,-4),(-3,0),(-2.6,4),(1.8,4.5),(-0.5,11.2),(5,10),(8,10),(12,10),(16,10),(19,8),(19,4),(14.2,-3.5),(12,-5),(8,-5),(2,-6),(0,-5),(7,1),(7,3),(1.6,2.2),(12,2),(21,-3)]
         for i,(x,y) in enumerate(trees):
             h=3.5+(i%4)*.35
             trunk=collision('trunk',cylinder(.22,h),f'0 0 {h/2} 0 0 0')+visual('trunk',cylinder(.22,h),'.28 .13 .06 1',f'0 0 {h/2} 0 0 0')
@@ -133,6 +143,22 @@ def world(name):
         for i,x in enumerate([0,4,8,12,16]): s+=static_shape(f'perimeter_{i}',f'{x} -12 1 0 0 0',box('3.8 .2 2'),'.5 .52 .5 1')
     return s+'</world></sdf>'
 
+# Dense smoke: a visual-only cloud. Perception treats it as an occluder of what lies
+# beneath it (see hri_reasoning.tom.SMOKE_RADIUS), not as a hazard with a route state.
+SMOKE_PUFFS=[(0,0,1.4,2.3),(1.7,.6,2.0,1.9),(-1.6,-.5,1.8,2.0),(.4,-1.5,2.4,1.8),(-.6,1.6,2.8,1.7),(0,0,3.4,1.9)]
+def smoke_asset():
+    smoke=''.join(visual(f'puff_{i}',sphere(r),'.55 .56 .57 .55',f'{x} {y} {z} 0 0 0') for i,(x,y,z,r) in enumerate(SMOKE_PUFFS))
+    model_asset('hazard_smoke',f'<model name="hazard_smoke"><static>true</static><link name="link">{smoke}</link></model>')
+
+# A fully developed fire with its smoke column (drifting north with the wind): an
+# impassable incident, unlike the passable hazard_fire patches of the fire model.
+def fire_smoke_asset():
+    parts=visual('flame_core',cylinder(.9,2.0),'1 .3 .02 .9','0 0 1.0 0 0 0')+visual('flame_side',cylinder(.55,1.4),'1 .45 .05 .9','.7 .35 .7 0 0 0')
+    parts+=visual('flame_tip',sphere(.75),'1 .68 .05 .85','0 0 2.1 0 0 0')
+    for i,(x,y,z,r) in enumerate([(0,.3,3.2,1.1),(.3,.8,4.2,1.4),(.6,1.4,5.3,1.7),(1.0,2.2,6.4,2.0)]):
+        parts+=visual(f'smoke_{i}',sphere(r),'.18 .18 .2 .55',f'{x} {y} {z} 0 0 0')
+    model_asset('hazard_fire_smoke',f'<model name="hazard_fire_smoke"><static>true</static><link name="link">{parts}</link></model>')
+
 def main():
     model_asset('robot',wheeled('robot'))
     model_asset('human',wheeled('human',True))
@@ -146,10 +172,13 @@ def main():
     model_asset('hazard_fire',f'<model name="hazard_fire"><static>true</static><link name="link">{fire}</link></model>')
     gas=visual('gas_volume',sphere(1.8),'.5 .65 .16 .3','0 0 1 0 0 0')
     model_asset('hazard_gas',f'<model name="hazard_gas"><static>true</static><link name="link">{gas}</link></model>')
+    smoke_asset()
+    fire_smoke_asset()
     for name in ['minimal','forest','industrial']:
         write_xml(ROOT/'worlds'/f'{name}.sdf',world(name))
     for name in ['forest','industrial']:
-        config={'scenario':name,'world':name,'frame':'world','nodes':NODES,'edges':[{'id':eid,'source':a,'target':b,'length':math.dist(NODES[a],NODES[b]),'initial_state':'unknown'} for eid,a,b in EDGES],'start':'start','goal':'safety','robot_start':[0,0,0.02],'human_start':[0,-2,0.02],'uav_start':[6,0,8],'hazards':[{'id':'hazard_tree' if name=='forest' else 'hazard_debris','model':'hazard_tree' if name=='forest' else 'hazard_debris','edge':'trail_a','position':[7,-2,.45 if name=='forest' else .6],'at':3.0,'kind':'tree' if name=='forest' else 'debris','radius':2.0},{'id':'hazard_fire','model':'hazard_fire','edge':'exit_a','position':[12,0.7,0],'at':24.0,'kind':'fire','radius':1.6},{'id':'hazard_fire_spread' if name=='forest' else 'hazard_gas','model':'hazard_fire' if name=='forest' else 'hazard_gas','edge':'exit_a','position':[13.2,2.2,0],'at':38.0,'kind':'fire' if name=='forest' else 'gas','radius':1.8}]}
+        NODES_,EDGES_=route_map(name)
+        config={'scenario':name,'world':name,'frame':'world','nodes':NODES_,'edges':[{'id':eid,'source':a,'target':b,'length':math.dist(NODES_[a],NODES_[b]),'initial_state':'unknown'} for eid,a,b in EDGES_],'start':'start','goal':'safety','robot_start':[0,0,0.02],'human_start':[0,-2,0.02],'uav_start':[6,0,8],'hazards':[{'id':'hazard_tree' if name=='forest' else 'hazard_debris','model':'hazard_tree' if name=='forest' else 'hazard_debris','edge':'trail_a','position':[7,-2,.45 if name=='forest' else .6],'at':3.0,'kind':'tree' if name=='forest' else 'debris','radius':2.0},{'id':'hazard_fire','model':'hazard_fire','edge':'exit_a','position':[12,0.7,0],'at':24.0,'kind':'fire','radius':1.6},{'id':'hazard_fire_spread' if name=='forest' else 'hazard_gas','model':'hazard_fire' if name=='forest' else 'hazard_gas','edge':'exit_a','position':[13.2,2.2,0],'at':38.0,'kind':'fire' if name=='forest' else 'gas','radius':1.8}]}
         (ROOT/'config'/f'{name}.json').write_text(json.dumps(config,indent=2)+'\n')
 
 if __name__=='__main__': main()

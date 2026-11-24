@@ -2,7 +2,7 @@ import copy,json,math
 from pathlib import Path
 import pytest
 from hri_reasoning.warning_model import (ACTIONS,Context,DecisionPolicy,WarningMDP,
-    immediate_losses,expected_losses,signal_outcomes)
+    immediate_losses,expected_losses,signal_outcomes,warning_threshold,baseline_actions)
 from hri_reasoning.route_risk import recommend
 from hri_reasoning.rescue_runtime import warning_route_recommendation
 from hri_reasoning.response_model import HumanResponse
@@ -126,7 +126,9 @@ def test_risk_route_avoids_blockage_and_can_prefer_longer_path():
     unknown=recommend(c,[0,-2],[],[],costs)
     assert not unknown['verified'] and 'No verified safe route' in unknown['explanation']
     shut={**h,'edge':'approach','position':[2,-2,0]}
-    assert recommend(c,[0,-2],[shut],clear,costs)['safety']=='unavailable'
+    north={**h,'id':'h2','edge':'trail_d','position':[-.6,4,0]}  # Trail D also leaves from the start
+    assert recommend(c,[0,-2],[shut],clear,costs)['recommended'][:2]==['start','trail_d']
+    assert recommend(c,[0,-2],[shut,north],clear,costs)['safety']=='unavailable'
 
 def test_warning_waits_for_safe_route_and_never_recommends_observed_hazard():
     stale={'edges':['access','corridor_b','east_exit'],'recommended':['gate','junction','corridor_b','assembly'],
@@ -173,3 +175,28 @@ def test_normal_policy_module_has_no_private_input():
 def test_bad_costs_and_probabilities_rejected(mutation):
     c=config();mutation(c)
     with pytest.raises(ValueError):DecisionPolicy(c)
+
+
+def test_threshold_is_the_break_even_probability_for_alerting():
+    c=config()
+    for urgency in (0,1):
+        threshold=warning_threshold(ctx(urgency=urgency),c)
+        assert 0<threshold['probability']<1
+        for delta,alert_wins in ((-1e-6,False),(1e-6,True)):
+            losses=immediate_losses(ctx(urgency=urgency,probability=threshold['probability']+delta),c)
+            best_alert=min(losses['SOFT_CUE'],losses['EXPLICIT_WARNING'])
+            assert (best_alert<losses['SILENT'])==alert_wins
+    # Closer hazards lower the bar for speaking.
+    assert warning_threshold(ctx(urgency=1),c)['probability']<warning_threshold(ctx(urgency=0),c)['probability']
+    assert warning_threshold(ctx(approaching=False),c) is None
+
+
+def test_baseline_actions_contrast_belief_aware_and_change_alerts():
+    c=config()
+    aware=baseline_actions(ctx(probability=.05,approaching=False,distance=10),c)
+    assert aware=={'B1':'SILENT','B2':'SILENT','B3':'EXPLICIT_WARNING','B4':'SILENT'}
+    unaware=baseline_actions(ctx(probability=.9,distance=10),c)
+    assert unaware['B4']!='SILENT' and unaware['B2']=='SILENT'
+    assert baseline_actions(ctx(urgency=2,distance=1),c)['B4']=='EXPLICIT_WARNING'
+    result=DecisionPolicy(c).choose('h',1,1,ctx(probability=.9),False)
+    assert result['baselines']['B4']==result['action'] and result['threshold']['probability']<.9

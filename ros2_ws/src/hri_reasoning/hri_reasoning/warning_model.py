@@ -83,6 +83,43 @@ def immediate_losses(context, config):
     return losses
 
 
+def warning_threshold(context, config):
+    """Break-even probability of an incompatible belief above which an alert has
+    lower immediate loss than silence. Losses are linear in p, so for each alert
+    p*H = p*H*(1-e) + (1-p)*F + K  gives  p* = (F+K)/(H*e+F). None if no alert
+    can beat silence (for example, the hazard is off the crew's task)."""
+    c,r=config['costs'],config['response']
+    if not (context.approaching and context.task_relevant):return None
+    harm=context.severity*config['urgency_multipliers'][context.urgency]*(c['missed_danger']+c['hazard_exposure'])
+    best=None
+    for action,prefix,false_scale in (('SOFT_CUE','soft',.5),('EXPLICIT_WARNING','explicit',1.)):
+        false_alarm=c['unnecessary_alert']*false_scale
+        fixed=(c[prefix+'_interruption']+c['evacuation_delay']*r[prefix+'_delay_s']+
+               c['repeated_warning']*context.repeats)
+        denominator=harm*r[prefix+'_effectiveness']+false_alarm
+        if denominator<=0:continue
+        p=(false_alarm+fixed)/denominator
+        if p<=1 and (best is None or p<best['probability']):best={'probability':p,'action':action}
+    return best
+
+
+def baseline_actions(context, config):
+    """What each baseline would decide for this hazard at this instant, from the
+    same public context. Ignores per-policy repeat cooldowns; display only."""
+    t=config['thresholds']
+    relevant=context.task_relevant
+    if relevant and context.urgency==2:
+        return {'B1':'SILENT','B2':'EXPLICIT_WARNING','B3':'EXPLICIT_WARNING','B4':'EXPLICIT_WARNING'}
+    losses=immediate_losses(context,config)
+    if not (relevant and context.approaching):b4='SILENT'
+    elif config['require_informative_action'] and context.informative_actions==0:b4='SILENT'
+    else:b4=min(('SILENT','SOFT_CUE','EXPLICIT_WARNING'),key=losses.get)
+    return {'B1':'SILENT',
+        'B2':'EXPLICIT_WARNING' if relevant and context.distance<=t['proximity_m'] else 'SILENT',
+        'B3':'EXPLICIT_WARNING' if relevant else 'SILENT',
+        'B4':b4}
+
+
 def expected_losses(context,config,allow_observe=True):
     losses=immediate_losses(context,config)
     if allow_observe and context.uncertainty>config['thresholds']['observe_uncertainty'] and context.urgency<2:
@@ -266,4 +303,5 @@ class DecisionPolicy:
         self.memory[key]=memory
         return {'action':action,'classification':category,'reason':reason,'losses':losses,
             'context':asdict(context),'engine':self.engine if self.table else 'expected_loss',
-            'fallback':self.fallback,'warning_count':memory['count'],'emergency':emergency}
+            'fallback':self.fallback,'warning_count':memory['count'],'emergency':emergency,
+            'threshold':warning_threshold(context,c),'baselines':baseline_actions(context,c)}

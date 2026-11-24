@@ -10,7 +10,7 @@ reports=[]
 for label,case in [('normal','A'),('combined','D'),('replay','D')]:
  out=root/label;out.mkdir()
  env=dict(os.environ,ROS_DOMAIN_ID='48',GZ_PARTITION=f'forest_test_{os.getpid()}_{label}')
- cmd=['ros2','launch','hri_bringup','demo.launch.py','scenario:=forest',f'forest_case:={case}','dashboard:=false','mission:=false',f'log_path:={out}/events.jsonl']
+ cmd=['ros2','launch','hri_bringup','demo.launch.py','scenario:=forest',f'forest_case:={case}','forest_ground_robot:=true','dashboard:=false','mission:=false',f'log_path:={out}/events.jsonl']
  with (out/'simulator.log').open('w') as log:
   sim=subprocess.Popen(cmd,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
   try:

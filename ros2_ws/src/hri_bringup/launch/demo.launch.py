@@ -34,7 +34,8 @@ def launch_setup(context):
         if scenario!='forest' or case not in 'ABCDEF' or len(case)!=1:
             raise ValueError('forest_case must be A–F and scenario must be forest')
         from hri_bringup.forest_world import prepare_world
-        world_file,config_file,resources=prepare_world(sim,case,int(values['seed']),values['scenario_config'] or None)
+        ground_robot={'true':True,'false':False}.get(values['forest_ground_robot'].lower())
+        world_file,config_file,resources=prepare_world(sim,case,int(values['seed']),values['scenario_config'] or None,ground_robot)
         extra_resources=str(resources)+':'
     gui = values['gui'].lower() == 'true'
     mission = values['mission'].lower() == 'true'
@@ -103,6 +104,8 @@ def launch_setup(context):
                 'assumed_beta':params['assumed_beta'], 'assumed_lapse':params['assumed_lapse'],
                 'assumed_observation_radius':params['assumed_observation_radius'],
                 'assumed_compliance':params['assumed_compliance'], 'policy':values['policy'],
+                # A model assumption, like assumed_beta; the crew uses the same scenario value.
+                'assumed_hazard_multiplier':float(json.loads(config_file.read_text()).get('hazard_multiplier',4.)),
                 'external_policy':external,
                 'observation_sources':values['observation_sources'],
                 'tom_prior':ParameterValue(values['tom_prior'] or json.dumps(DEFAULT_PRIOR),value_type=str),
@@ -141,7 +144,7 @@ def launch_setup(context):
 
 
 def generate_launch_description():
-    args = {'scenario': 'forest', 'seed': '7', 'policy': 'B4', 'gui': 'false', 'start_paused': 'false', 'forest_case': '', 'scenario_config':'', 'uav_controller': 'scripted_pose',
+    args = {'scenario': 'forest', 'seed': '7', 'policy': 'B4', 'gui': 'false', 'start_paused': 'false', 'forest_case': '', 'forest_ground_robot': '', 'scenario_config':'', 'uav_controller': 'scripted_pose',
             'dashboard': 'true', 'reasoning': 'true', 'nav2': 'auto', 'oil_case':'blockage', 'simulated_operator':'false',
             'mission': 'false', 'waypoints_json': '[[1,0],[1,1]]',
             'trajectory_path': 'results/waypoint_trajectory.csv',
