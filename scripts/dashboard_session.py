@@ -15,16 +15,25 @@ import tempfile
 import threading
 import time
 import uuid
+import xml.etree.ElementTree as ET
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse, unquote
 from urllib.request import urlopen
 
+from scene_export import export_scene
+
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'ros2_ws/src/hri_industrial'))
 CASES={'forest':list('ABCDEF'),'oil_facility':['normal','blockage','fire','gas','combined','known','unaware','no_safe']}
 POLICIES=['B1','B2','B3','B4','oracle']
+QUICK_OPERATIONS=('view','pause','resume')
 EQUIPMENT_REGISTRY=Path('ros2_ws/src/hri_industrial/config/equipment_registry.json')
+
+def public_incident(h):
+    # Injectable incident catalogue: identity and route only, never positions or schedule times.
+    return {'id':h['id'],'kind':h['kind'],'edge':h['edge'],'manual_only':h.get('manual_only') is True,
+            **({'display_name':h['display_name']} if isinstance(h.get('display_name'),str) else {})}
 
 def configuration(state):
     scenario=state.get('scenario','forest');case=state.get('case','F')
@@ -34,9 +43,7 @@ def configuration(state):
     if active.is_file():config=json.loads(active.read_text())
     # Explicit public/configuration allowlist; hidden knowledge never enters UI.
     public={k:config[k] for k in ('nodes','edges','goal','robot_start','uav','fire') if k in config}
-    public['incidents']=[{'id':h['id'],'kind':h['kind'],'edge':h['edge'],
-                          **({'display_name':h['display_name']} if isinstance(h.get('display_name'),str) else {})}
-                         for h in config.get('hazards',[])]
+    public['incidents']=[public_incident(h) for h in config.get('hazards',[])]
     public['source']='scenario configuration / public map prior; not a live observation'
     if scenario=='oil_facility':
         import xml.etree.ElementTree as ET
@@ -46,9 +53,7 @@ def configuration(state):
         incident=load_tank_damage_incident(industrial/'config/industrial_incidents.json',layout)
         if not any(item.get('event_id')==incident['event_id'] for item in config.get('hazards',[]) if isinstance(item,dict)):
             config=add_tank_damage_hazard(config,incident)
-            public['incidents']=[{'id':h['id'],'kind':h['kind'],'edge':h['edge'],
-                                  **({'display_name':h['display_name']} if isinstance(h.get('display_name'),str) else {})}
-                                 for h in config.get('hazards',[])]
+            public['incidents']=[public_incident(h) for h in config.get('hazards',[])]
         world=ET.parse(ROOT/'ros2_ws/src/hri_industrial/worlds/oil_facility.sdf')
         public['personnel']=[list(map(float,m.findtext('pose').split()[:2])) for m in world.findall('.//model')
             if m.get('name','').startswith('personnel_') and not m.get('name','').startswith('personnel_helmet_')]
@@ -59,7 +64,7 @@ def configuration(state):
 def validate_command(data):
     if not isinstance(data,dict):raise ValueError('Expected command object')
     command=data.get('command')
-    allowed={'switch','reset','pause','resume','start_experiment','stop_experiment','evaluation'}
+    allowed={'switch','reset','pause','resume','start_experiment','stop_experiment','evaluation','view'}
     if command not in allowed:raise ValueError('Unsupported session command')
     fields={'command','scenario','case','seed','policy','engine','manual_incidents','duration','enabled','human_radius','map_rate','human_lapse'}
     if set(data)-fields:raise ValueError('Unexpected command fields')
@@ -72,7 +77,7 @@ def validate_command(data):
     for key,maximum in (('human_radius',20),('map_rate',1),('human_lapse',1)):
         if key in data and (type(data[key]) not in (int,float) or not 0<=data[key]<=maximum):raise ValueError('Invalid human behavior parameter')
     if command=='start_experiment' and (type(data.get('duration')) not in (int,float) or not 10<=data['duration']<=600):raise ValueError('Experiment duration must be 10–600 simulation seconds')
-    if command=='evaluation' and type(data.get('enabled')) is not bool:raise ValueError('enabled must be boolean')
+    if command in ('evaluation','view') and type(data.get('enabled')) is not bool:raise ValueError('enabled must be boolean')
     return data
 
 def update_equipment_contents(data, registry_path):
@@ -115,7 +120,15 @@ class Session:
         self.root=root;self.runner=runner;self.lock=threading.RLock();self.busy=False
         self.operation=None;self.error=None;self.state={};self.telemetry=None;self.ros_reachable=False
         self.experiment=None;self.evaluation=False;self.metrics=None;self.stopping=False
+        self.scenes={}
         self.reload()
+
+    def scene(self):
+        """Static world geometry for the web 3D view, cached per scenario instance."""
+        with self.lock:state=copy.deepcopy(self.state)
+        key=tuple(str(state.get(k,'')) for k in ('scenario','case','seed','output'))
+        if key not in self.scenes:self.scenes={key:export_scene(self.root,state)}
+        return self.scenes[key]
 
     def reload(self):
         path=self.root/'results/scenario-session.json'
@@ -137,16 +150,23 @@ class Session:
                 'experiment':copy.deepcopy(self.experiment),'evaluation_enabled':self.evaluation,
                 'evaluation':self.metrics,'artifacts':files}
 
-    def submit(self, data):
+    def submit(self, data, wait=5.):
         validate_command(data)
-        with self.lock:
-            if self.busy:raise RuntimeError('Another session operation is still running')
-            if data['command']=='evaluation':
-                self.evaluation=data['enabled'];self.metrics=None;return
-            if self.experiment and self.experiment['state']=='running' and data['command'] in ('switch','reset','start_experiment'):
-                raise RuntimeError('Stop the active experiment before restarting the scenario')
-            self.busy=True;self.error=None;self.operation=data['command']
-            threading.Thread(target=self.execute,args=(copy.deepcopy(data),),daemon=True).start()
+        deadline=time.monotonic()+wait
+        while True:
+            with self.lock:
+                # View/pause toggles finish in about a second (e.g. the web view
+                # pausing Gazebo's window): queue behind them instead of rejecting.
+                if not (self.busy and self.operation in QUICK_OPERATIONS and time.monotonic()<deadline):
+                    if self.busy:raise RuntimeError('Another session operation is still running')
+                    if data['command']=='evaluation':
+                        self.evaluation=data['enabled'];self.metrics=None;return
+                    if self.experiment and self.experiment['state']=='running' and data['command'] in ('switch','reset','start_experiment'):
+                        raise RuntimeError('Stop the active experiment before restarting the scenario')
+                    self.busy=True;self.error=None;self.operation=data['command']
+                    threading.Thread(target=self.execute,args=(copy.deepcopy(data),),daemon=True).start()
+                    return
+            time.sleep(.05)
 
     def execute(self, data):
         command=data['command'];args=[sys.executable,str(self.root/'scripts/scenarioctl.py')]
@@ -158,11 +178,13 @@ class Session:
                 for key,arg in (('human_radius','--human-radius'),('map_rate','--map-rate'),('human_lapse','--human-lapse')):
                     if key in data:args += [arg,str(data[key])]
                 if command=='start_experiment':args+=['--play']
+            elif command=='view':args+=['view-resume' if data['enabled'] else 'view-pause']
             else:args+=['pause' if command=='stop_experiment' else command]
             result=self.runner(args,cwd=self.root,text=True,capture_output=True,timeout=150)
             if result.returncode:raise RuntimeError((result.stderr or result.stdout)[-3000:])
             with self.lock:
                 self.reload()
+                if command=='view':return  # 3D-view rendering only; simulation state is unchanged.
                 self.state['paused']=command not in ('resume','start_experiment')
                 if command in ('switch','reset','start_experiment'):
                     self.telemetry=None;self.ros_reachable=False;self.metrics=None
@@ -223,6 +245,10 @@ def handler(session):
         def do_GET(self):
             path=urlparse(self.path).path
             if path=='/api/session':self.reply(200,session.snapshot());return
+            if path=='/api/session/scene':
+                try:self.reply(200,session.scene())
+                except (OSError,ValueError,ET.ParseError) as exc:self.reply(500,{'error':f'Cannot export world geometry: {exc}'})
+                return
             prefix='/api/session/artifacts/'
             if path.startswith(prefix):
                 target=(session.root/unquote(path[len(prefix):])).resolve();output=session.state.get('output')

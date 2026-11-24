@@ -8,6 +8,8 @@ services:
     image: belief-aware-hri:jazzy-gui
     init: true
     stop_grace_period: 20s
+    # CPU weight under contention (Docker default 1024). Raise via HRI_CPU_SHARES on busy shared hosts.
+    cpu_shares: ${HRI_CPU_SHARES:-1024}
     shm_size: 1gb
     working_dir: /work
     volumes:
